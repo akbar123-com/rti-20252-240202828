@@ -102,18 +102,28 @@ Problem Statement (1 paragraf):
 
 Pilih satu topik di bidang TI yang diminati. Transformasikan melalui 5 tahap Problem Formation Model.
 
-**Topik awal:** ________________________________________
+**Topik awal:** Manajemen Keamanan, pemantauan, pelaporan serta pencocokan kendaraan pada Area Parkir Kampus (Sistem Parkir Pintar).
 
 | Tahap | Hasil |
 |-------|-------|
-| Reality | *Contoh: Aplikasi e-commerce sering ditinggalkan saat checkout* |
-| Observed Issue (Symptom) | *Contoh: Bounce rate checkout 68%* |
-| Diagnosed Problem (Root Cause) | |
-| Researchable Problem | |
-| Measurable Variable | |
+| Reality | Terjadi insiden keamanan di UPB (sepeda motor rusak atau body motor pecah) dan kendaraan mahasiswa saat  masuk dan keluar kampus  yang belum tercatat di area parkir kampus . |
+| Observed Issue (Symptom) | Petugas sulit dalam  membuktikan suatu tindakan kejahatan seperti perusakan atau pencurian kendaraan. pertugas keamanan juga kesulitan dalam  mencocokannya antara kendaraan yang keluar dengan identitas pemiliknya jadi tidak ada gerbang keamanan atau portal otomatis di dalamnya. pihak kampus juga tidak memiliki bukti yang kuat saat terjadi kerusakan atau kehilangan tersebut. |
+| Diagnosed Problem (Root Cause) | Tidak adanya sistem pencatatan digital yang terhubung dengan pemantauan visual dan pencocokan identitas otomatis, sehingga seluruh proses pengawasan bergantung sepenuhnya pada ingatan manual dan pemeriksaan fisik yang terbatas. |
+| Researchable Problem | Bagaimana merancang sistem manajemen parkir yang mengintegrasikan monitoring visual dan pencocokan identitas otomatis (Smart Parking) untuk menyediakan rekam jejak digital yang valid guna meminimalkan risiko keamanan dan kerugian fisik kendaraan di UPB serta media pelaporan yang mudah digunakan mahasiswa|
+| Measurable Variable | 
 
-**Apakah terjebak solution-first thinking?** [ ] Ya / [ ] Tidak
-> Jika ya, kembali ke tahap mana? ________________________
+1. Persentase akurasi pencatatan data masuk-keluar (%).
+
+2. Waktu rata-rata pengambilan bukti digital oleh petugas saat terjadi laporan insiden (menit).
+
+3. Jumlah laporan kerusakan kendaraan yang tidak teridentifikasi pelakunya (angka).
+
+4. Waktu rata rata yang dibutuhkan mahasiswa untuk menyelesaikan pembuatan laporan insiden melalui aplikasi (detik/menit).
+
+5. Skor kepuasan pengguna atau kemudahan penggunaan aplikasi (menggunakan skala 1-100 dari kuesioner usability). |
+
+**Apakah terjebak solution-first thinking?** [ ] Ya / [x] Tidak
+> Sudah tepat, karena bermula dari fenomena kerusakan fisik kendaraan di lapangan
 
 ---
 
@@ -123,14 +133,14 @@ Gambarkan konteks sistem dari masalah riset di Latihan 1.
 
 | Komponen | Deskripsi |
 |----------|----------|
-| Input | *Contoh: Request HTTP dari browser pengguna* |
-| Process | |
-| Output | |
-| Outcome | |
-| Constraints | |
-| Stakeholders | |
+| Input | Data identitas mahasiswa (ID/KTM), data plat nomor kendaraan, dan tangkapan gambar/video dari kamera monitoring.serrta pelaporan dari pengguna baik keamanan,fasilitas atau tentang sistem parkir pintarnya |
+| Process | Pencocokan otomatis antara identitas pemilik dengan kendaraan yang masuk, penyimpanan log riwayat aktivitas parkir, dan verifikasi status keluar dan masuk serta pengelolaan pelaporan yang dibuat oleh pengguna di fitur pelaporan pada parkir pintar |
+| Output | Log aktivitas digital (waktu masuk atau keluar), status validasi gerbang (Open/Closed)portal terbuka atau tertutup , dan rekam jejak bukti jika terjadi insiden, serta rekam jejak laporan yang dikirimkan pengguna. |
+| Outcome | Terciptanya lingkungan parkir UPB yang lebih aman, adanya pertanggungjawaban data yang jelas, dan peningkatan kepercayaan mahasiswa terhadap keamanan kampus. |
+| Constraints | Kondisi cahaya di area parkir saat malam hari yang mempengaruhi kualitas visual kamera, serta keterbatasan anggaran untuk infrastruktur fisik gerbang otomatis. |
+| Stakeholders | Mahasiswa UPB, Petugas Keamanan (Satpam), Manajemen Kampus/Bagian Sarana Prasarana. |
 
-**Komponen mana yang paling relevan dengan masalah riset?** _______________
+**Komponen mana yang paling relevan dengan masalah riset?** Process dan Output (Karena inti masalahnya adalah kegagalan proses pencatatan dan tiadanya output berupa bukti digital)
 
 ---
 
@@ -140,17 +150,16 @@ Evaluasi problem statement yang sudah dibuat menggunakan 5 kriteria.
 
 | Kriteria | Skor (1-5) | Justifikasi |
 |----------|-----------|-------------|
-| Clarity | *Contoh: 4 — cukup jelas tapi perlu spesifikasi dataset* | |
-| Measurability | | |
-| Relevance | | |
-| Testability | | |
-| Impact | | |
+| Clarity | 5 | | Sangat jelas karena merujuk pada insiden fisik nyata di UPB dan membutuhkan bukti untuk memperkuat hukum. |
+| measurability | 4 | | ketepatan pencatatan dan waktu respon sistem sangat bisa diukur secara kuantitatif. |
+| Relevance | 5 | Sangat relevan bagi UPB untuk mencegah kerugian materiil mahasiswa lebih lanjut (tidak diharapkan) |
+| Testability | 5 | Bisa diuji dengan simulasi insiden dan membandingkan kemudahan pencarian bukti data.|
+| Impact | 5 | Memberikan rasa aman langsung bagi ribuan mahasiswa pengguna kendaraan di kampus.|
 
-**Skor total:** _____ / 25
+**Skor total:** 24 / 25
 
 **Problem statement versi final (1 paragraf):**
-> ___________________________________________________
-> ___________________________________________________
+> Manajemen parkir di Universitas Putra Bangsa saat ini masih berjalan secara manual tanpa sistem pencatatan digital yang terintegrasi, yang berdampak pada ketidakmampuan pihak keamanan dalam mengidentifikasi pelaku perusakan fisik kendaraan mahasiswa. tidak adanya pencocokan data antara identitas pemilik kendaraan dengan data log masukdan keluar secara real time menyebabkan hilangnya bukti kuat yang dibutuhkan untuk menindaklanjuti laporan kerusakan atau kejahatan tersebut. Oleh karena itu, riset ini berfokus pada pengembangan sistem "Parkir Pintar" yang menghubungkan pengawasan visual dan pencocokan otomatis secara digital guna meningkatkan akurasi data serta menyediakan rekam jejak digital yang handal sebagai solusi pengamanan area parkir kampus yang lebih aman dan evisien.
 
 ---
 
@@ -159,5 +168,4 @@ Evaluasi problem statement yang sudah dibuat menggunakan 5 kriteria.
 > Bandingkan "masalah" yang biasa ditemui saat coding (bug, error) dengan masalah riset. Apa perbedaan fundamental dalam cara mendefinisikan dan mendekati keduanya?
 
 **Jawaban:**
-> ___________________________________________________
-> ___________________________________________________
+Inti perbedaannya ada di tujuan dan bukti. Kalau kita ketemu error pas coding, fokus kita cuma satu yaitu gimana caranya errornya hilang dan aplikasinya bisa jalan lancar. Tapi kalau masalah riset, pendekatannya beda karena kita berangkat dari masalah asli di lapangan. Dalam riset, sekadar bikin aplikasinya "nyala dan bisa dipakai" itu nggak cukup. Kita diwajibkan untuk membuktikan pakai data dan angka nyata, apakah aplikasi Parkir Pintar yang kita buat ini beneran efektif ngatasin masalah keamanan motor di UPB, atau jangan jangan cuma bagus di layar komputer aja.
