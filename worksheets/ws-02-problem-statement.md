@@ -110,17 +110,7 @@ Pilih satu topik di bidang TI yang diminati. Transformasikan melalui 5 tahap Pro
 | Observed Issue (Symptom) | Petugas sulit dalam  membuktikan suatu tindakan kejahatan seperti perusakan atau pencurian kendaraan. pertugas keamanan juga kesulitan dalam  mencocokannya antara kendaraan yang keluar dengan identitas pemiliknya jadi tidak ada gerbang keamanan atau portal otomatis di dalamnya. pihak kampus juga tidak memiliki bukti yang kuat saat terjadi kerusakan atau kehilangan tersebut. |
 | Diagnosed Problem (Root Cause) | Tidak adanya sistem pencatatan digital yang terhubung dengan pemantauan visual dan pencocokan identitas otomatis, sehingga seluruh proses pengawasan bergantung sepenuhnya pada ingatan manual dan pemeriksaan fisik yang terbatas. |
 | Researchable Problem | Bagaimana merancang sistem manajemen parkir yang mengintegrasikan monitoring visual dan pencocokan identitas otomatis (Smart Parking) untuk menyediakan rekam jejak digital yang valid guna meminimalkan risiko keamanan dan kerugian fisik kendaraan di UPB serta media pelaporan yang mudah digunakan mahasiswa|
-| Measurable Variable | 
-
-1. Persentase akurasi pencatatan data masuk-keluar (%).
-
-2. Waktu rata-rata pengambilan bukti digital oleh petugas saat terjadi laporan insiden (menit).
-
-3. Jumlah laporan kerusakan kendaraan yang tidak teridentifikasi pelakunya (angka).
-
-4. Waktu rata rata yang dibutuhkan mahasiswa untuk menyelesaikan pembuatan laporan insiden melalui aplikasi (detik/menit).
-
-5. Skor kepuasan pengguna atau kemudahan penggunaan aplikasi (menggunakan skala 1-100 dari kuesioner usability). |
+| Measurable Variable | 1. Persentase akurasi pencatatan data masuk-keluar (%). 2. Waktu rata-rata pengambilan bukti digital oleh petugas saat terjadi laporan insiden (menit). 3. Jumlah laporan kerusakan kendaraan yang tidak teridentifikasi pelakunya (angka). 4. Waktu rata rata yang dibutuhkan mahasiswa untuk menyelesaikan pembuatan laporan insiden melalui aplikasi (detik/menit). 5. Skor kepuasan pengguna atau kemudahan penggunaan aplikasi (menggunakan skala 1-100 dari kuesioner usability). |
 
 **Apakah terjebak solution-first thinking?** [ ] Ya / [x] Tidak
 > Sudah tepat, karena bermula dari fenomena kerusakan fisik kendaraan di lapangan
@@ -150,8 +140,8 @@ Evaluasi problem statement yang sudah dibuat menggunakan 5 kriteria.
 
 | Kriteria | Skor (1-5) | Justifikasi |
 |----------|-----------|-------------|
-| Clarity | 5 | | Sangat jelas karena merujuk pada insiden fisik nyata di UPB dan membutuhkan bukti untuk memperkuat hukum. |
-| measurability | 4 | | ketepatan pencatatan dan waktu respon sistem sangat bisa diukur secara kuantitatif. |
+| Clarity | 5 | Sangat jelas karena merujuk pada insiden fisik nyata di UPB dan membutuhkan bukti untuk memperkuat hukum. |
+| measurability | 4 | ketepatan pencatatan dan waktu respon sistem sangat bisa diukur secara kuantitatif. |
 | Relevance | 5 | Sangat relevan bagi UPB untuk mencegah kerugian materiil mahasiswa lebih lanjut (tidak diharapkan) |
 | Testability | 5 | Bisa diuji dengan simulasi insiden dan membandingkan kemudahan pencarian bukti data.|
 | Impact | 5 | Memberikan rasa aman langsung bagi ribuan mahasiswa pengguna kendaraan di kampus.|
