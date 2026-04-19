@@ -106,7 +106,7 @@ Pilih satu topik di bidang TI yang diminati. Transformasikan melalui 5 tahap Pro
 
 | Tahap | Hasil |
 |-------|-------|
-| Reality | Terjadi insiden keamanan di UPB (sepeda motor rusak atau body motor pecah) dan kendaraan mahasiswa saat  masuk dan keluar kampus  yang belum tercatat di area parkir kampus . |
+| Reality | Terjadi insiden keamanan di UPB (sepeda motor rusak atau body motor pecah) tepatnya tanggal 16 Oktober 2025 dialami adek kelas saya bernama ayu dan kendaraan mahasiswa saat  masuk dan keluar kampus  yang belum tercatat di area parkir kampus. |
 | Observed Issue (Symptom) | Petugas sulit dalam  membuktikan suatu tindakan kejahatan seperti perusakan atau pencurian kendaraan. pertugas keamanan juga kesulitan dalam  mencocokannya antara kendaraan yang keluar dengan identitas pemiliknya jadi tidak ada gerbang keamanan atau portal otomatis di dalamnya. pihak kampus juga tidak memiliki bukti yang kuat saat terjadi kerusakan atau kehilangan tersebut. |
 | Diagnosed Problem (Root Cause) | Tidak adanya sistem pencatatan digital yang terhubung dengan pemantauan visual dan pencocokan identitas otomatis, sehingga seluruh proses pengawasan bergantung sepenuhnya pada ingatan manual dan pemeriksaan fisik yang terbatas. |
 | Researchable Problem | Bagaimana merancang sistem manajemen parkir yang mengintegrasikan monitoring visual dan pencocokan identitas otomatis (Smart Parking) untuk menyediakan rekam jejak digital yang valid guna meminimalkan risiko keamanan dan kerugian fisik kendaraan di UPB serta media pelaporan yang mudah digunakan mahasiswa|
