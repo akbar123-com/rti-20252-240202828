@@ -103,24 +103,25 @@ Hypothesis Pair:
 
 Gunakan gap yang ditemukan di WS-03. Transformasikan menjadi Research Question.
 
-**Gap dari WS-03:** ____________________________________
+**Gap dari WS-03:** 
+Belum ada sistem yang mengintegrasikan pengawasan visual (CCTV) dan pencatatan posisi kendaraan secara ketat dengan media pelaporan insiden berbasis web  untuk menghasilkan  bukti digital yang cepat dan valid.
 
 **RQ versi pertama (tulis bebas):**
-> ___________________________________________________
+> Bagaimana pengaruh penggunaan sistem parkir yang terintegrasi dengan  pelaporan berbasis web terhadap kecepatan petugas keamanan ketika mencari bukti kendaraan di sekitarnya saat terjadi perusakan fisik atau kejahatan di area parkir dengan bukti digital, dibandingkan dengan metode pencarian CCTV manual ?
 
 **Evaluasi RQ:**
 
 | Komponen | Ada? | Isi |
 |----------|------|-----|
-| Metode spesifik | *Contoh: Ya — CNN vs RF* | |
-| Metrik terukur | | |
-| Baseline | | |
-| Dataset/konteks | | |
+| Metode spesifik | Ya — Pencatatan riwayat lokasi parkir | Mencatat riwayat letak parkir motor yang langsung terhubung dengan fitur lapor di aplikasi. |
+| Metrik terukur | Ya — Waktu pencarian pelaku | Menghitung berapa lama waktu (menit/detik) yang dibutuhkan untuk menemukan data bukti pendukung.|
+| Baseline | Ya — Pencarian manual | Petugas keamanan mencari bukti dengan mengecek ulang rekaman CCTV biasa satu per satu. |
+| Dataset/konteks | Ya — Kasus motor rusak di kampus | Uji coba sistem menggunakan skenario ada motor yang disenggol atau dirusak di area parkir Universitas Putra Bangsa. |
 
-**Tipe RQ:** [ ] Comparison / [ ] Improvement / [ ] Exploratory
+**Tipe RQ:** [ ] Comparison / [x] Improvement / [ ] Exploratory
 
 **RQ versi revisi (setelah evaluasi):**
-> ___________________________________________________
+> Bagaimana penerapan sistem pencatatan riwayat lokasi parkir yang terhubung ke fitur pelaporan dapat mempercepat petugas keamanan dalam menemukan data motor terduga pelaku (yang parkir di sebelah korban), jika dibandingkan dengan pencarian CCTV secara manual
 
 ---
 
@@ -130,14 +131,15 @@ Rumuskan pasangan hipotesis dari RQ di Latihan 1.
 
 | Komponen | Isi |
 |----------|-----|
-| H₀ | *Contoh: Tidak ada perbedaan signifikan F1-Score antara CNN dan RF pada dataset CIC-MalMem-2022* |
-| H₁ | |
-| Metrik | |
-| Threshold | |
-| Justifikasi threshold | |
+| H₀ | Penerapan sistem pencatatan riwayat lokasi parkir tidak memberikan perbedaan waktu yang signifikan (atau lebih lambat) dalam melacak data kendaraan di sekitar lokasi perusakan, jika dibandingkan dengan pencarian rekaman CCTV manual |
+| H₁ | Penerapan sistem pencatatan riwayat lokasi parkir secara signifikan lebih cepat dalam melacak data kendaraan di sekitar lokasi perusakan, jika dibandingkan dengan pencarian rekaman CCTV manual.|
+| Metrik | Lama waktu pencarian data kendaraan (diukur dalam menit/detik).|
+| Threshold | Rata-rata waktu pelacakan menggunakan sistem baru minimal 50% lebih cepat daripada rata-rata waktu metode manual (dan terbukti signifikan secara statistik, misal p-value < 0.05).|
+| Justifikasi threshold | Penurunan waktu 50% adlah batas logis yang membuktikan pemrosesan query database  parkir pintar memberikan solusi lebih mudah dan nyata bagi pihak keamanan kampus, bukan sekadar selisih waktu karena kebetulan.|
 
-**Apakah hipotesis ini falsifiable?** [ ] Ya / [ ] Tidak
-> Bagaimana cara membuktikannya salah? ___________________
+**Apakah hipotesis ini falsifiable?** [x] Ya / [ ] Tidak
+> Bagaimana cara membuktikannya salah? 
+di akhir tugas saaat melakukan simulasi pengujian pencarian data pada berbagai skenario kasus Simulasi Terkontrol (Roleplay/Skenario Buatan). Jika dari hasilnya ternyata rata rata waktu yang dibutuhkan sistem untuk mencari data posisi motor sama lamanya, atau malah lebih lama dari petugas keamanan yang mencari manual lewat playback CCTV, maka H₁ otomatis ditolak (hipotesis terbukti salah).
 
 ---
 
@@ -147,14 +149,14 @@ Lengkapi rantai dari RQ hingga metode analisis.
 
 | Tahap | Isi |
 |-------|-----|
-| RQ | *Contoh: Apakah CNN menghasilkan F1-Score lebih tinggi dari RF...* |
-| Variable (IV) | *Contoh: Jenis algoritma (CNN vs RF)* |
-| Variable (DV) | |
-| Metric | |
-| Data source | |
-| Analysis method | |
+| RQ | Bagaimana penerapan sistem pencatatan riwayat lokasi parkir yang terhubung ke fitur pelaporan dapat mempercepat petugas keamanan dalam melacak daftar kendaraan di sekitar lokasi kejadian, jika dibandingkan dengan pencarian rekaman CCTV secara manual saat terjadi insiden perusakan fisik. |
+| Variable (IV) | Metode pencarian data (Sistem Riwayat Lokasi lawan Pencarian CCTV Manual) |
+| Variable (DV) | Lama waktu pencarian data kendaraan di sekitar lokasi kejadian |
+| Metric | Satuan waktu (dalam menit dan detik) yang dihitung mulai dari laporan diterima hingga data kendaraan ditemukan|
+| Data source | Catatan waktu hasil simulasi skenario perusakan motor di area parkir Universitas Putra Bangsa|
+| Analysis method | Uji perbandingan rata rata waktu untuk melihat selisih kecepatan secara statistik|
 
-**Apakah rantai lengkap?** [ ] Ya / [ ] Tidak
+**Apakah rantai lengkap?** [x] Ya / [ ] Tidak
 > Jika tidak, tahap mana yang perlu direvisi? ______________
 
 ---
