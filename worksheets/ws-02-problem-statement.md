@@ -106,17 +106,11 @@ Pilih satu topik di bidang TI yang diminati. Transformasikan melalui 5 tahap Pro
 
 | Tahap | Hasil |
 |-------|-------|
-| saat membuat projek IoT, salah satunya di bidang kesehatan seperti monitor detak jantung memerlukan pengiriman data yang sangat cepat. Sensor seperti MAX30102 mampu membaca puluhan hingga ratusan data per detik. Saat perancangan sistem, pengembang atau mahasiswa biasanya langsung menggunakan MySQL sebagai database bawaan tanpa ngecek dulu apakah database itu kuat nahan beban datanya. |
+| Reality | saat membuat projek IoT, salah satunya di bidang kesehatan seperti monitor detak jantung memerlukan pengiriman data yang sangat cepat. Sensor seperti MAX30102 mampu membaca puluhan hingga ratusan data per detik. Saat perancangan sistem, pengembang atau mahasiswa biasanya langsung menggunakan MySQL sebagai database bawaan tanpa ngecek dulu apakah database itu kuat nahan beban datanya. |
 | Observed Issue (Symptom) | ketika ESP32 ngirim ratusan data detak jantung secara beruntun tiap detik secara real-time, server lokal sering mengalami bottleneck atau ngeleg. Proses simpannya jadi melambat dan sering terjadi data loss (data sensor hilang/gagal tersimpan), Akibatnya, grafik detak jantungnya jadi putus-putus atau datanya nggak valid. |
 | Diagnosed Problem (Root Cause) | diagnosa masalahnya adalah tidak ada pengujian beban terlebih dahulu Tidak adanya percobaan dan analisi antara kecepatan baca sensor dengan kemampuan baca database dalam menangani loss atau leg pada insert berfrekuensi tinggi. Penggunaan MySQL terkesan dipaksa digunakan tanpa membandingkannya dengan PostgreSQL.Orang asal pakai MySQL tanpa mikirin apakah kecepatan sensornya seimbang sama kecepatan databasenya. Padahal, ada pilihan database lain seperti PostgreSQL yang biasanya lebih kuat buat nanganin data yang masuk secara massal dan cepat. |
 | Researchable Problem | Bagaimana perbandingan kecepatan waktu simpan (insert time) dan kestabilan penyimpanan data antara arsitektur MySQL dan PostgreSQL saat menerima kiriman data berfrekuensi tinggi seperti detak jantung secara terus terusan dari ESP32|
-| Measurable Variable | 1. Kecepatan rata-rata waktu simpan data / Insert Time (dalam milidetik).
-
-
-2. Persentase data yang sukses masuk ke database tanpa hilang / Success Rate (%).
-
-
-3. Kenaikan beban pemakaian CPU dan RAM di laptop/server pas pengujian (%). |
+| Measurable Variable | 1. Kecepatan rata-rata waktu simpan data / Insert Time (dalam milidetik). 2. Persentase data yang sukses masuk ke database tanpa hilang / Success Rate (%). 3. Kenaikan beban pemakaian CPU dan RAM di laptop/server pas pengujian (%). |
 
 **Apakah terjebak solution-first thinking?** [ ] Ya / [x] Tidak
 > Sudah tepat, karena riset ini berawal dari masalah pas praktek server lokal sering ngelag dan datanya banyak yang hilang saat dijejali pengiriman data sensor yang terlalu cepet. pada riset ini tidak memaksa untuk harus memakai PostgreSQL tapi Riset ini justru membandingkan kinerjanya dengan MySQL, agar mendapatkan jawaban yang tepat database mana yang  paling sesuai untuk memproses data frekwensi tinggi tanpa ada error atau loss data.
