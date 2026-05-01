@@ -102,18 +102,24 @@ Problem Statement (1 paragraf):
 
 Pilih satu topik di bidang TI yang diminati. Transformasikan melalui 5 tahap Problem Formation Model.
 
-**Topik awal:** Manajemen Keamanan, pemantauan, pelaporan serta pencocokan kendaraan pada Area Parkir Kampus (Sistem Parkir Pintar).
+**Topik awal:** Analisis Perbandingan Kinerja Database MySQL vs PostgreSQL untuk Penyimpanan Data Sensor Jantung (MAX30102) Berfrekuensi Tinggi dari mikrokontroler ESP32.
 
 | Tahap | Hasil |
 |-------|-------|
-| Reality | Terjadi insiden keamanan di UPB (sepeda motor rusak atau body motor pecah) tepatnya tanggal 16 Oktober 2025 dialami adek kelas saya bernama ayu dan kendaraan mahasiswa saat  masuk dan keluar kampus  yang belum tercatat di area parkir kampus. |
-| Observed Issue (Symptom) | Petugas sulit dalam  membuktikan suatu tindakan kejahatan seperti perusakan atau pencurian kendaraan. pertugas keamanan juga kesulitan dalam  mencocokannya antara kendaraan yang keluar dengan identitas pemiliknya jadi tidak ada gerbang keamanan atau portal otomatis di dalamnya. pihak kampus juga tidak memiliki bukti yang kuat saat terjadi kerusakan atau kehilangan tersebut. |
-| Diagnosed Problem (Root Cause) | Tidak adanya sistem pencatatan digital yang terhubung dengan pemantauan visual dan pencocokan identitas otomatis, sehingga seluruh proses pengawasan bergantung sepenuhnya pada ingatan manual dan pemeriksaan fisik yang terbatas. |
-| Researchable Problem | Bagaimana merancang sistem manajemen parkir yang mengintegrasikan monitoring visual dan pencocokan identitas otomatis (Smart Parking) untuk menyediakan rekam jejak digital yang valid guna meminimalkan risiko keamanan dan kerugian fisik kendaraan di UPB serta media pelaporan yang mudah digunakan mahasiswa|
-| Measurable Variable | 1. Persentase akurasi pencatatan data masuk-keluar (%). 2. Waktu rata-rata pengambilan bukti digital oleh petugas saat terjadi laporan insiden (menit). 3. Jumlah laporan kerusakan kendaraan yang tidak teridentifikasi pelakunya (angka). 4. Waktu rata rata yang dibutuhkan mahasiswa untuk menyelesaikan pembuatan laporan insiden melalui aplikasi (detik/menit). 5. Skor kepuasan pengguna atau kemudahan penggunaan aplikasi (menggunakan skala 1-100 dari kuesioner usability). |
+| saat membuat projek IoT, salah satunya di bidang kesehatan seperti monitor detak jantung memerlukan pengiriman data yang sangat cepat. Sensor seperti MAX30102 mampu membaca puluhan hingga ratusan data per detik. Saat perancangan sistem, pengembang atau mahasiswa biasanya langsung menggunakan MySQL sebagai database bawaan tanpa ngecek dulu apakah database itu kuat nahan beban datanya. |
+| Observed Issue (Symptom) | ketika ESP32 ngirim ratusan data detak jantung secara beruntun tiap detik secara real-time, server lokal sering mengalami bottleneck atau ngeleg. Proses simpannya jadi melambat dan sering terjadi data loss (data sensor hilang/gagal tersimpan), Akibatnya, grafik detak jantungnya jadi putus-putus atau datanya nggak valid. |
+| Diagnosed Problem (Root Cause) | diagnosa masalahnya adalah tidak ada pengujian beban terlebih dahulu Tidak adanya percobaan dan analisi antara kecepatan baca sensor dengan kemampuan baca database dalam menangani loss atau leg pada insert berfrekuensi tinggi. Penggunaan MySQL terkesan dipaksa digunakan tanpa membandingkannya dengan PostgreSQL.Orang asal pakai MySQL tanpa mikirin apakah kecepatan sensornya seimbang sama kecepatan databasenya. Padahal, ada pilihan database lain seperti PostgreSQL yang biasanya lebih kuat buat nanganin data yang masuk secara massal dan cepat. |
+| Researchable Problem | Bagaimana perbandingan kecepatan waktu simpan (insert time) dan kestabilan penyimpanan data antara arsitektur MySQL dan PostgreSQL saat menerima kiriman data berfrekuensi tinggi seperti detak jantung secara terus terusan dari ESP32|
+| Measurable Variable | 1. Kecepatan rata-rata waktu simpan data / Insert Time (dalam milidetik).
+
+
+2. Persentase data yang sukses masuk ke database tanpa hilang / Success Rate (%).
+
+
+3. Kenaikan beban pemakaian CPU dan RAM di laptop/server pas pengujian (%). |
 
 **Apakah terjebak solution-first thinking?** [ ] Ya / [x] Tidak
-> Sudah tepat, karena bermula dari fenomena kerusakan fisik kendaraan di lapangan
+> Sudah tepat, karena riset ini berawal dari masalah pas praktek server lokal sering ngelag dan datanya banyak yang hilang saat dijejali pengiriman data sensor yang terlalu cepet. pada riset ini tidak memaksa untuk harus memakai PostgreSQL tapi Riset ini justru membandingkan kinerjanya dengan MySQL, agar mendapatkan jawaban yang tepat database mana yang  paling sesuai untuk memproses data frekwensi tinggi tanpa ada error atau loss data.
 
 ---
 
@@ -123,14 +129,14 @@ Gambarkan konteks sistem dari masalah riset di Latihan 1.
 
 | Komponen | Deskripsi |
 |----------|----------|
-| Input | Data identitas mahasiswa (ID/KTM), data plat nomor kendaraan, dan tangkapan gambar/video dari kamera monitoring.serrta pelaporan dari pengguna baik keamanan,fasilitas atau tentang sistem parkir pintarnya |
-| Process | Pencocokan otomatis antara identitas pemilik dengan kendaraan yang masuk, penyimpanan log riwayat aktivitas parkir, dan verifikasi status keluar dan masuk serta pengelolaan pelaporan yang dibuat oleh pengguna di fitur pelaporan pada parkir pintar |
-| Output | Log aktivitas digital (waktu masuk atau keluar), status validasi gerbang (Open/Closed)portal terbuka atau tertutup , dan rekam jejak bukti jika terjadi insiden, serta rekam jejak laporan yang dikirimkan pengguna. |
-| Outcome | Terciptanya lingkungan parkir UPB yang lebih aman, adanya pertanggungjawaban data yang jelas, dan peningkatan kepercayaan mahasiswa terhadap keamanan kampus. |
-| Constraints | Kondisi cahaya di area parkir saat malam hari yang mempengaruhi kualitas visual kamera, serta keterbatasan anggaran untuk infrastruktur fisik gerbang otomatis. |
-| Stakeholders | Mahasiswa UPB, Petugas Keamanan (Satpam), Manajemen Kampus/Bagian Sarana Prasarana. |
+| Input | Data asli detak jantung berupa nilai Photoplethysmogram (PPG)  dari jari tangan yang dibaca oleh sensor MAX30102 kemudian dikirim sangat cepat oleh ESP32 dengan frekuensi tinggi (misal 100 Samples Per Second) melalui jaringan Wi-Fi lokal. |
+| Process | Server menerima data itu, terus menjalankan perintah simpan ke database (INSERT) secara terus menerus, dan pemrosesan antrean beban traffic data masaltadi dikerjakan oleh engine MySQL dan PostgreSQL secara bergantian dalam kondisi jaringan yang sama. |
+| Output | Catatan seberapa cepat dataitu tersimpan  (insert time dalam milidetik), total baris data yang berhasil masuk ke tabel tanpa hilang, serta rekaman metrik penggunaan resource server (CPU/RAM) selama proses prngujian data tadi. |
+| Outcome | adanya panduan berupa angka nyata buat membantu mahasiswa IT dalam milih database, mana yang paling anti ngelag dan tidak gampang menghilangkan data atau data loss kalau akan bikin sistem IoT dengan tipe berkecepatan tinggi.|
+| Constraints | Spek hardware komputer yang dipakai buat server terbatas (RAM/Prosesor beda beda), sinyal WiFi yang kadang naik turun, sama batas maksimal kecepatan baca dari sensor MAX30102 itu sendiri. |
+| Stakeholders | Mahasiswa IT yang lagi bikin project, Developer IoT, anak Backend, dan Admin Sistem (SysAdmin).|
 
-**Komponen mana yang paling relevan dengan masalah riset?** Process dan Output (Karena inti masalahnya adalah kegagalan proses pencatatan dan tiadanya output berupa bukti digital)
+**Komponen mana yang paling relevan dengan masalah riset?** Process dan Output. (Karena inti riset ini adalah membedah bagaimana Proses engine kedua database tersebut dalam menangani beban aliran data dengan frekwensi tinggi, dan menilainya lewat Output  berupa angka kecepatan pasti dan persentase keberhasilan dalam penyimpanan data tanpa loss atau hilang).
 
 ---
 
@@ -140,16 +146,16 @@ Evaluasi problem statement yang sudah dibuat menggunakan 5 kriteria.
 
 | Kriteria | Skor (1-5) | Justifikasi |
 |----------|-----------|-------------|
-| Clarity | 5 | Sangat jelas karena merujuk pada insiden fisik nyata di UPB dan membutuhkan bukti untuk memperkuat hukum. |
-| measurability | 4 | ketepatan pencatatan dan waktu respon sistem sangat bisa diukur secara kuantitatif. |
-| Relevance | 5 | Sangat relevan bagi UPB untuk mencegah kerugian materiil mahasiswa lebih lanjut (tidak diharapkan) |
-| Testability | 5 | Bisa diuji dengan simulasi insiden dan membandingkan kemudahan pencarian bukti data.|
-| Impact | 5 | Memberikan rasa aman langsung bagi ribuan mahasiswa pengguna kendaraan di kampus.|
+| Clarity | 5 | Sangat jelas, karena kita langsung ngebandingin dua database untuk menangani satu masalah nyata  yaitu (beban data detak jantung yang cepat dan dengan frekwensi yang tinggi).|
+| measurability | 5 | Gampang banget diukur pakai angka pasti, yaitu pakai kecepatan waktu simpan (milidetik) dan persentase data yang sukses tersimpan. |
+| Relevance | 5 | Pas banget sama tren alat IoT kesehatan (wearable) sekarang, yang mewajibkan keandalan backend agar tidak ada data medis penting yang hilang. |
+| Testability | 5 | Gampang diuji secara langsung pakai perangkat keras nyata (ESP32 & sensor) di laptop sendiri, tanpa butuh skenario rekayasa atau kejadian acak.|
+| Impact | 5 | Memberikan jawaban pasti untuk mahasiswa IT atau developer saat milih database, agar database server yang dipakai mereka tidak lambat dan tidak adanya data hilang saat pengiriman data. |
 
-**Skor total:** 24 / 25
+**Skor total:** 25 / 25
 
 **Problem statement versi final (1 paragraf):**
-> Manajemen parkir di Universitas Putra Bangsa saat ini masih berjalan secara manual tanpa sistem pencatatan digital yang terintegrasi, yang berdampak pada ketidakmampuan pihak keamanan dalam mengidentifikasi pelaku perusakan fisik kendaraan mahasiswa. tidak adanya pencocokan data antara identitas pemilik kendaraan dengan data log masukdan keluar secara real time menyebabkan hilangnya bukti kuat yang dibutuhkan untuk menindaklanjuti laporan kerusakan atau kejahatan tersebut. Oleh karena itu, riset ini berfokus pada pengembangan sistem "Parkir Pintar" yang menghubungkan pengawasan visual dan pencocokan otomatis secara digital guna meningkatkan akurasi data serta menyediakan rekam jejak digital yang handal sebagai solusi pengamanan area parkir kampus yang lebih aman dan evisien.
+> saat membuat perangkat IoT berfrekuensi tinggi, seperti alat pemantau detak jantung yang menggunakan sensor fisik MAX30102 dan mikrokontroler ESP32, pengiriman data yang terus-terusan sering kali menyebabkan bottleneck (keterlambatan pemrosesan) pada local server. Kebanyakan pengembang asal pakai MySQL sebagai database bawaan tanpa ngecek batas kemampuannya, padahal ini bahaya karena data detak jantung yang penting bisa hilang atau gagal tersimpan. Karena jarang ada perbandingan langsung dengan alternatif database yang lebih kuat buat data besar seperti PostgreSQL, penentuan database sering kali jadi kurang tepat. Oleh karena itu, riset ini berfokus buat menganalisis perbandingan kecepatan waktu simpan (insert time) dan persentase keberhasilan penyimpanan antara MySQL dan PostgreSQL. Tujuannya buat nyari tahu database mana yang paling stabil dan aman dari risiko hilang data kalau dipakai untuk sistem sensor berkecepatan tinggi.
 
 ---
 
@@ -158,4 +164,6 @@ Evaluasi problem statement yang sudah dibuat menggunakan 5 kriteria.
 > Bandingkan "masalah" yang biasa ditemui saat coding (bug, error) dengan masalah riset. Apa perbedaan fundamental dalam cara mendefinisikan dan mendekati keduanya?
 
 **Jawaban:**
-Inti perbedaannya ada di tujuan dan bukti. Kalau kita ketemu error pas coding, fokus kita cuma satu yaitu gimana caranya errornya hilang dan aplikasinya bisa jalan lancar. Tapi kalau masalah riset, pendekatannya beda karena kita berangkat dari masalah asli di lapangan. Dalam riset, sekadar bikin aplikasinya "nyala dan bisa dipakai" itu nggak cukup. Kita diwajibkan untuk membuktikan pakai data dan angka nyata, apakah aplikasi Parkir Pintar yang kita buat ini beneran efektif ngatasin masalah keamanan motor di UPB, atau jangan jangan cuma bagus di layar komputer aja.
+Perbedaan utamanya ada di tujuan dan cara kita ngebuktiinnya. Kalau kita ngadepin error pas lagi ngoding, fokus kita murni teknis aja: gimana caranya error itu hilang, kodenya bener, dan alatnya bisa jalan.
+
+Namun, jika masalah riset, pendekatannya jauh lebih dalam dan analitis. Dalam riset, sekadar membuat sensor MAX30102 berhasil menyimpan data ke database itu tidak cukup. dalam riset diwajibkan untuk menguji batas maksimal sistem dan membuktikannya menggunakan data berupa angka nyata. Kita harus bisa menjawab dan membuktikan ketika sistem dihujani ratusan data biologis per detik,  database mana (MySQL atau PostgreSQL) yang secara nyata memiliki waktu simpan tercepat dan paling aman dari risiko kehilangan data (data loss),bukan sekadar aplikasinya bebas dari bug dan berjalan saja.
