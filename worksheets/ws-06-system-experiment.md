@@ -72,9 +72,9 @@ Research Question: ____________________
 Variable → Component Mapping:
 | Variabel | Tipe | Komponen Sistem | Cara Manipulasi/Pengukuran |
 |----------|------|-----------------|---------------------------|
-|          | IV   |                 |                           |
-|          | DV   |                 |                           |
-|          | CV   |                 |                           |
+|       | IV   |                 |                           |
+|       | DV   |                 |                           |
+|       | CV   |                 |                           |
 
 4 Prinsip Desain:
   [ ] Traceability — Setiap komponen bisa ditelusuri ke variabel
@@ -94,15 +94,15 @@ Experimental Setup:
 
 Gunakan RQ dan variabel dari WS-05. Petakan ke komponen sistem.
 
-**RQ:** __________________________________________________
+**RQ:** Bagaimana perbandingan kecepatan waktu simpan (insert latency) dan beban memori server antara database MySQL dan PostgreSQL ketika digunakan untuk menangani aliran data berfrekuensi tinggi secara terus menerus (continuous streaming) dari sensor detak jantung MAX30102?
 
 | Variabel | Tipe | Komponen Sistem | Cara Manipulasi / Pengukuran |
 |----------|------|-----------------|---------------------------|
-| *Contoh: Jenis model* | *IV* | *Modul classifier (swap RF ↔ CNN)* | *Ganti config `model_type`* |
-| | DV | | |
-| | CV | | |
+| Jenis database    | *IV* | Database Engine / Server Backend |  Mengubah setting koneksi di script pengujian (misalnya ganti tujuan port dari 3306 untuk MySQL menjadi 5432 untuk PostgreSQL) lalu jalankan ulang atau proses ulang data yang masuk dengan database yang berbeda. |
+| Waktu simpan (insert latency) & Beban Server  | DV |  Log waktu di script program & Resource Monitor komputer | Membuat catatan waktu otomatis di dalam kodingan (mencatat waktu tepat sebelum dan sesudah data masuk) untuk melihat berapa milidetik kecepatan database saat menyimpan data. Bersamaan dengan itu,juga membuka Task Manager di komputer server untuk memantau persentase tarikan beban CPU dan RAM nya saat uji coba sedang berjalan |
+| Frekuensi data masuk | CV |  Script Pengirim Data / Mikrokontroler |  Menyamakan delay atau kecepatan pengiriman data di dalam kode (misalnya dipatok pasti 100 data per detik) agar MySQL dan PostgreSQL menerima beban yang persis sama.di sini saya akan merekam detak jantung dari sempel dan menyimpannya dalam esp32 saya kemudian sempel itu kan memilii jumlah data yang sama akan dkirimkan atau diujikan ke database masing masing. |
 
-**Apakah semua variabel bisa di-map?** [ ] Ya / [ ] Tidak
+**Apakah semua variabel bisa di-map?** [x] Ya / [ ] Tidak
 > Jika tidak, komponen apa yang perlu ditambahkan? _________
 
 ---
@@ -113,14 +113,19 @@ Evaluasi desain sistem terhadap 4 prinsip.
 
 | Prinsip | Status | Bukti / Penjelasan |
 |---------|--------|-------------------|
-| Traceability | *Contoh: ✅ — setiap modul punya label variabel* | |
-| Modularity | | |
-| Controllability | | |
-| Measurability | | |
+| Traceability | ✅  | Alurnya sangat jelas dan bisa dilacak. Data berawal dari array di ESP32, dikirim lewat WiFi, kemudian ditangkap oleh script server, dan masuk ke tabel database. Jika ada eror atau hilang, kita tahu  macetnya di jalur mana. |
+| Modularity | ✅ | Komponennya terpisah dengan rapi (klien atau pengirim data ESP32 dan sensor  seerta server yaitu database yang digunakan itu berdiri sendiri). Kita bisa menukar tujuan mesin penyimpanannya (dari MySQL ke PostgreSQL) di sisi server tanpa harus merombak ulang kodingan ESP32 di sisi alat. |
+| Controllability | ✅ | Beban pengujian teratur  dan  adil di kedua database karena isi angka detak jantung yang sudah disediakan itu data yang real dari manusia tetapi disimpan atau direkam didalam esp32nyaa itu sebelum diujikan ke kedua datbabase dan kecepatan tembakannya diatur sama untuk kedua database dengan delay kodingan (misal 100 data/detik).|
+| Measurability | ✅ | Output langsung menghasilkan angka pasti. Selisih waktu simpan (insert latency) dihitung otomatis oleh kode menjadi satuan milidetik, dan beban ditarik murni berupa persentase (%) dari pantauan Task Manager komputer yang digunakan |
 
-**Prinsip mana yang paling sulit dipenuhi?** _______________
+**Prinsip mana yang paling sulit dipenuhi?** Controllability (Keterkendalian lingkungan)
 **Strategi untuk mengatasinya:**
-> ___________________________________________________
+> Tantangan terbesarnya adalah menjaga kondisi jaringan Wi-Fi agar tidak mendadak delay atau mencegah komputer melakukan tugas latar belakang yang memakan CPU (seperti update Windows atau proses Antivirus) saat pengujian sedang berlangsung.
+
+**Strategi:**
+> memakai jaringan Wi-Fi yang tidak ada internetnya atau paket internetnya dimatikan agar pengiriman data dari ESP32 lancar tanpa gangguan. kemudian mematikan semua aplikasi lain di laptop, agar saat CPU-nya berat  itu berarti  karena proses database tersebut, bukan karena program lain pada laptop.
+
+
 
 ---
 
@@ -130,14 +135,14 @@ Jika sistem memiliki 3 komponen utama, rencanakan ablation study.
 
 | Kondisi | Komponen A | Komponen B | Komponen C | Hasil yang Diharapkan |
 |---------|-----------|-----------|-----------|----------------------|
-| Full | *Contoh: ✅ CNN* | *Contoh: ✅ Temporal features* | *Contoh: ✅ Z-score norm* | *Baseline penuh* |
-| – A | ❌ (ganti RF) | ✅ | ✅ | |
-| – B | ✅ | ❌ (tanpa temporal) | ✅ | |
-| – C | ✅ | ✅ | ❌ (tanpa normalisasi) | |
+| Full | ✅ PostgreSQL | ✅ dengan wifi | ✅ memakai index/ primarykey | Primary Key	Baseline penuh (Waktu simpan dan beban CPU dalam kondisi sistem nyata/lengkap). |
+| – A | ❌ (ganti mySQL dengan postgree) | ✅ | ✅ | |Mengetahui selisih performa antara arsitektur mesin PostgreSQL vs MySQL dengan koneksi wifi.
+| – B | ✅ | ❌ (ganti wifi dengan USB serial yang langsung dicolok ke laptop) | ✅ | Mengetahui seberapa besar delay/latency yang disebabkan oleh pengiriman data nirkabel (wifi).|
+| – C | ✅ | ✅ | ❌ (Tanpa Index, tabel polos) | Mengetahui seberapa besar beban memori dan waktu yang digunakan hanya untuk menyusun atau mengurutkan data (indexing) di dalam masing masing server.|
 
-**Komponen mana yang diprediksi paling berkontribusi?** _____
+**Komponen mana yang diprediksi paling berkontribusi?** Komponen A yaitu mesin database
 **Mengapa?**
-> ___________________________________________________
+> Karena arsitektur inti dari MySQL (InnoDB) dan PostgreSQL memiliki cara yang sangat berbeda dalam menangani antrean memori saat menerima tembakan data kueri INSERT yang beruntun tanpa jeda, sehingga menghasilkan perbedaan grafik persentase pada CPU.
 
 ---
 
@@ -146,5 +151,5 @@ Jika sistem memiliki 3 komponen utama, rencanakan ablation study.
 > Apa risiko jika sistem dibangun seperti produk (monolitik, fitur lengkap) lalu baru dilakukan eksperimen? Mengapa arsitektur modular penting untuk riset?
 
 **Jawaban:**
-> ___________________________________________________
-> ___________________________________________________
+> Risiko terbesar membangun sistem monolitik  adalah kebutaan analitik saat terjadi hambatan (bottleneck). Jika pengujian langsung dilakukan dalam keadaan utuh dan ternyata waktu simpannya sangat lambat (misal latency tembus 1 detik per data), kita tidak akan bisa mengetahui siapa yang menyebabkan lambat tersebut. Apakah dari WiFinya yang lemot, Apakah struktur tabelnya yang salah, Atau apakah memang dari mesin databasenya yang tidak kuat?
+> Di sini arsitektur modular sangat penting dalam riset. Dengan sistem yang terpisah pisah, kita bisa memetakan komponen untuk mencari sumber masalahnya tersebut. Jika jalur jaringan diputus dan data dikirim lewat kabel ternyata tetap lambat, kita bisa membuktikan secara ilmiah bahwa beban terberat memang murni berasal dari mesin databasenya itu sendiri, bukan karena gangguan koneksi dan lainnya.
