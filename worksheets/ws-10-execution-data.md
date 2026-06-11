@@ -136,10 +136,8 @@ Susun execution plan untuk eksperimen Anda. Tentukan skenario, jumlah run, dan s
 | 38 | MySQL (Subjek 38)  | N/A | engine=InnoDB, beban=10.000 data | Planned|
 | 39 | MySQL (Subjek 39) | N/A | engine=InnoDB, beban=10.000 data | Planned |
 | 40 | MySQL (Subjek 40)  | N/A | engine=InnoDB, beban=10.000 data | Planned|
-
-
-|  41| PostgreSQL (Subjek 1) | N/A | engine=PostgreSQL, beban=10.000 data| Planned |
-|  42| PostgreSQL (Subjek 2) | N/A| engine=PostgreSQL, beban=10.000 data| Planned |
+| 41| PostgreSQL (Subjek 1) | N/A | engine=PostgreSQL, beban=10.000 data| Planned |
+| 42| PostgreSQL (Subjek 2) | N/A| engine=PostgreSQL, beban=10.000 data| Planned |
 | 43 | PostgreSQL (Subjek 3) | N/A | engine=PostgreSQL, beban=10.000 data| Planned |
 | 44 | PostgreSQL (Subjek 4) | N/A| engine=PostgreSQL, beban=10.000 data| Planned |
 | 45 | PostgreSQL (Subjek 5) | N/A | engine=PostgreSQL, beban=10.000 data| Planned |
@@ -155,7 +153,7 @@ Susun execution plan untuk eksperimen Anda. Tentukan skenario, jumlah run, dan s
 | 55 | PostgreSQL (Subjek 15) | N/A | engine=PostgreSQL, beban=10.000 data| Planned |
 | 56 | PostgreSQL (Subjek 16) | N/A| engine=PostgreSQL, beban=10.000 data| Planned |
 | 57 | PostgreSQL (Subjek 17) | N/A | engine=PostgreSQL, beban=10.000 data| Planned |
-| 58  | PostgreSQL (Subjek 18) | N/A| engine=PostgreSQL, beban=10.000 data| Planned |
+| 58 | PostgreSQL (Subjek 18) | N/A| engine=PostgreSQL, beban=10.000 data| Planned |
 | 59 | PostgreSQL (Subjek 19) | N/A | engine=PostgreSQL, beban=10.000 data| Planned |
 | 60 | PostgreSQL (Subjek 20) | N/A| engine=PostgreSQL, beban=10.000 data| Planned |
 | 61 | PostgreSQL (Subjek 21) | N/A | engine=PostgreSQL, beban=10.000 data| Planned |
