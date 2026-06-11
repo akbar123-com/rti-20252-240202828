@@ -99,23 +99,23 @@ Dokumentasikan environment untuk eksperimen Anda (boleh environment saat ini ata
 
 | Komponen | Spesifikasi |
 |----------|------------|
-| CPU | *Contoh: Intel Core i7-12700H, 14 Core* |
-| RAM | *Contoh: 32 GB DDR5* |
-| GPU | *Contoh: NVIDIA RTX 3060 6GB / CPU-only jika tidak ada GPU* |
-| OS | *Contoh: Ubuntu 22.04 LTS / Windows 11* |
-| Runtime | |
-| Framework | |
-| Random Seed | |
+| CPU | Intel Core i5 (atau setara), Minimal 4 Core |
+| RAM |  8 GB atau 16 GB DDR4|
+| GPU | CPU-only (Tidak pakai GPU karena pengujian murni fokus pada tarikan RAM dan prosesor database)|
+| OS |  Windows 10 / Windows 11 (Untuk memantau beban menggunakan Task Manager)|
+| Runtime | PHP 8.x (Untuk menjalankan skrip penangkap data / data ingestion)|
+| Framework | Native PHP (Sengaja tidak memakai framework berat agar metrik waktu simpan benar-benar murni tanpa ada delay tambahan) |
+| Random Seed | Tidak ada / N/A (Karena riset ini menggunakan data riil langsung dari sensor fisik MAX30102, bukan data acak buatan komputer)|
 
 **Dependencies (minimal 5):**
 
 | Library | Version | Alasan Dibutuhkan |
 |---------|---------|-------------------|
-| *Contoh: scikit-learn* | *1.3.2* | *Klasifikasi + evaluasi metrik* |
-| | | |
-| | | |
-| | | |
-| | | |
+| MYSQL| 8.0 | Sebagai sistem database engine standar bawaan (baseline) yang akan diuji kemampuannya. |
+| PostgreSQL | 15.x / 16.x | Sebagai sistem database engine pembanding (intervensi) yang diklaim lebih kuat menahan beban.|
+|XAMPP (Apache) | 8.2| Sebagai web server lokal terisolasi untuk menjalankan skrip backend tanpa koneksi internet.|
+| PHP PDO (Ekstensi)| Bawaan PHP| Untuk membuat koneksi yang stabil dari kodingan skrip secara langsung ke database MySQL maupun PostgreSQL.|
+| ESP32 | 2.x| Untuk menulis program dan menanamkan kodingan pengirim aliran data ke dalam mikrokontroler ESP32. |
 
 ---
 
@@ -125,18 +125,18 @@ Rancang tes repeatability sederhana: jalankan kode yang sama 3× di environment 
 
 | Run | Seed | Metrik Utama | Hasil Sama? |
 |-----|------|-------------|-------------|
-| 1 | *Contoh: 42* | *Contoh: Accuracy* | — |
-| 2 | | | [ ] Ya / [ ] Tidak |
-| 3 | | | [ ] Ya / [ ] Tidak |
+| 1 | Data ESP32 dikunci | Insert Latency (ms) & Beban RAM (%) | — |
+| 2 | Data ESP32 dikunci| Insert Latency (ms) & Beban RAM (%)| [ ] Ya / [X] Tidak |
+| 3 | Data ESP32 dikunci| Insert Latency (ms) & Beban RAM (%)| [ ] Ya / [X] Tidak |
 
 **Jika hasil berbeda, kemungkinan penyebab:**
-> ___________________________________________________
+> Hasil angka milidetiknya tidak akan 100% sama persis karena fluktuasi suhu pada prosesor laptop i3 (thermal throttling) jika sudah mulai panas , adanya sisa memori (cache) yang belum terhapus sempurna oleh sistem operasi Windows meskipun sudah di-restart, atau sedikit delay dari rambatan sinyal Wi-Fi lokal. Namun, secara rata-rata statistik, tren performanya akan tetap konsisten.
 
 **Checklist kontrol yang sudah diterapkan:**
 - [ ] Random seed di-set di semua level
-- [ ] Tidak ada background process yang mengganggu
-- [ ] Cache dibersihkan antar-run
-- [ ] Config file yang sama untuk semua run
+- [X] Tidak ada background process yang mengganggu
+- [X] Cache dibersihkan antar-run
+- [X] Config file yang sama untuk semua run
 
 ---
 
@@ -145,25 +145,43 @@ Rancang tes repeatability sederhana: jalankan kode yang sama 3× di environment 
 Tulis README minimum untuk eksperimen Anda (6 komponen wajib).
 
 ```
-# Judul Eksperimen: ____________________
+# Judul Eksperimen: Analisis Perbandingan Kecepatan Waktu Simpan (Insert Latency) MySQL vs PostgreSQL menggunakan Aliran Data Sensor MAX30102
 
 ## 1. Environment
-> (Salin spesifikasi dari Latihan 1)
+- CPU: Intel Core i3 (Gen 12/13)
+- RAM: 8 GB / 16 GB DDR5
+- GPU: CPU-only (Intel UHD Graphics)
+- OS: Windows 11
+- Runtime: PHP 8.x (Native)
+- Database: MySQL 8.0 & PostgreSQL 15.x/16.x
 
 ## 2. Installation
-> (Langkah instalasi, misal: "pip install -r requirements.txt")
+1. Install XAMPP untuk menjalankan web server (Apache) dan MySQL.
+2. Install PostgreSQL secara terpisah.
+3. Buat database dan import skema tabel (struktur tabel kembar untuk kedua database).
+4. Pindahkan folder skrip PHP penangkap data ke dalam folder `htdocs` di XAMPP.
+5. Buka Arduino IDE, lalu upload source code (.ino) ke dalam mikrokontroler ESP32.
 
 ## 3. Data
-> (Deskripsi data: sumber, format, ukuran)
+- Sumber: Perangkat keras sensor fisik MAX30102 via mikrokontroler ESP32 (Continuous streaming / dikirim beruntun secara real-time).
+- Format: Angka detak jantung (BPM) dan Timestamp milidetik.
+- Ukuran: Target 10.000 baris rekaman data untuk setiap sesi pengujian database.
 
 ## 4. Execution
-> (Command untuk menjalankan eksperimen)
+1. Pastikan laptop terhubung ke jaringan Wi-Fi lokal yang sama dengan ESP32 (tanpa internet).
+2. Nyalakan service MySQL di XAMPP (pastikan PostgreSQL mati).
+3. Jalankan skrip backend PHP di browser, lalu nyalakan alat ESP32 untuk mulai menembakkan data.
+4. Pantau persentase RAM/CPU melalui Task Manager.
+5. Setelah 10.000 data masuk, catat hasil milidetik rata-ratanya, matikan MySQL, bersihkan cache, nyalakan PostgreSQL, lalu ulangi langkah 3 dan 4.
 
 ## 5. Configuration
-> (File config yang digunakan + parameter kunci)
+- `koneksi.php`: File untuk mengatur switch koneksi (Host, DB Name, User, Password) ke MySQL atau PostgreSQL.
+- `esp32_sender.ino`: Konfigurasi SSID Wi-Fi lokal, IP Address laptop server, dan delay kecepatan tembakan data.
 
 ## 6. Expected Output
-> (Contoh output yang diharapkan + format)
+- Tampilan web akan memunculkan teks hasil berupa angka rata-rata waktu simpan (insert latency) dalam hitungan milidetik (ms).
+- Pada komputer server (Task Manager), terlihat fluktuasi grafik persentase beban pemakaian RAM dan CPU selama proses data masuk.
+
 ```
 
 ---
@@ -172,6 +190,6 @@ Tulis README minimum untuk eksperimen Anda (6 komponen wajib).
 
 > Apakah eksperimen Anda saat ini bisa direproduksi oleh orang lain tanpa bantuan Anda? Komponen apa yang masih hilang?
 
-**Level saat ini:** [ ] Repeatability / [ ] Reproducibility / [ ] Belum keduanya
+**Level saat ini:** [X] Repeatability / [ ] Reproducibility / [ ] Belum keduanya
 **Komponen yang belum terdokumentasi:**
-> ___________________________________________________
+> Eksperimen ini baru di tahap Repeatability (bisa diulang oleh saya sendiri di lingkungan yang sama). Orang lain belum bisa langsung mereproduksinya secara sempurna (Reproducibility) karena masih ada komponen fisik dan kode yang belum dilampirkan secara publik. Komponen yang masih hilang antara lain: diagram wiring (jalur kabel) fisik antara sensor MAX30102 dengan ESP32, rincian struktur tabel SQL-nya, serta source code lengkap (skrip PHP dan kode Arduino) yang belum diunggah ke repository publik seperti GitHub.

@@ -90,13 +90,13 @@ Kumpulkan hasil dari WS-02 sampai WS-07 menjadi satu ringkasan proposal.
 
 | Komponen | Sumber | Isi (1-2 kalimat) |
 |----------|--------|-------------------|
-| Problem Statement | WS-02 | *Contoh: Sistem rekomendasi memiliki akurasi tinggi (RMSE 0.87) tetapi satisfaction score rendah (45/100). Gap antara metrik teknis dan kepuasan pengguna belum diteliti.* |
-| Gap | WS-03 | *Contoh: Tidak ada studi yang mengintegrasikan collaborative filtering dengan user-context signals untuk meningkatkan satisfaction.* |
-| RQ | WS-04 | *Contoh: Apakah penambahan context-aware signals pada collaborative filtering meningkatkan satisfaction score tanpa menurunkan RMSE?* |
-| Hipotesis | WS-04 | *Contoh: H₁: Sistem CF+context menghasilkan satisfaction ≥ 70/100 dengan RMSE ≤ 0.90 dibanding baseline CF murni.* |
-| Variabel & Metrik | WS-05 | *Contoh: IV = jenis sistem (CF vs CF+context); DV = satisfaction score (skala 0-100) + RMSE (regresi).* |
-| Sistem | WS-06 | |
-| Desain Eksperimen | WS-07 | |
+| Problem Statement | WS-02 | Pengiriman data detak jantung yang sangat cepat dari alat IoT sering membuat server lokal macet (bottleneck) dan berisiko menghilangkan data rekam medis pasien. Hal ini sering terjadi karena developer asal menggunakan MySQL bawaan tanpa menguji batas kekuatannya terlebih dahulu. |
+| Gap | WS-03 | Penelitian yang membandingkan performa MySQL dan PostgreSQL kebanyakan hanya menggunakan simulasi data mati (statis) di dalam komputer. Belum ada riset yang menguji batas kekuatan kedua database tersebut menggunakan aliran data beruntun (continuous streaming) secara langsung dari sensor fisik medis.|
+| RQ | WS-04 | Bagaimana perbandingan kecepatan waktu simpan (insert latency) dan tarikan beban memori server antara database MySQL dan PostgreSQL ketika dihajar aliran data berfrekuensi tinggi secara terus-menerus dari sensor MAX30102?|
+| Hipotesis | WS-04 | Terdapat perbedaan performa yang nyata, di mana PostgreSQL diprediksi memiliki waktu simpan yang lebih cepat dan beban server yang lebih efisien (minimal unggul 10%) dibandingkan MySQL saat menampung aliran data sensor secara real-time. |
+| Variabel & Metrik | WS-05 | Variabel bebas (IV) adalah jenis database yang digunakan (MySQL lawan PostgreSQL). Variabel terikatnya (DV) adalah efisiensi kerja server yang diukur menggunakan metrik kecepatan waktu simpan dalam milidetik (ms) dan persentase (%) pemakaian CPU/RAM server. |
+| Sistem | WS-06 | Sistem yang digunakan adalah arsitektur IoT medis yang memisahkan alat pengirim data (sensor MAX30102 dan ESP32) dengan komputer server lokal tempat database engine berjalan. |
+| Desain Eksperimen | WS-07 | Eksperimen komparatif ini dilakukan di jaringan Wi-Fi lokal tanpa internet, dengan cara menembakkan 10.000 data ke MySQL terlebih dahulu, lalu server dibersihkan (restart). Setelah itu, langkah dan beban data yang sama persis diulang untuk menguji PostgreSQL agar perbandingannya adil.|
 
 ---
 
@@ -106,18 +106,18 @@ Verifikasi 6 koneksi kritis. Isi dengan merujuk tabel di Latihan 1.
 
 | Koneksi | Status | Bukti |
 |---------|--------|-------|
-| Problem → Gap | *Contoh: ✅ — gap muncul dari 15 paper Bab 3 yang tidak ada yang mengkombinasikan CF + context untuk satisfaction* | |
-| Gap → RQ | *Contoh: ✅ — RQ langsung menanyakan apakah CF+context meningkatkan satisfaction* | |
-| RQ → Hypothesis | *Contoh: ✅ — H₁ memprediksi satisfaction ≥ 70 dengan threshold RMSE ≤ 0.90* | |
-| Hypothesis → Metric | | |
-| Metric → System | | |
-| System → Experiment | | |
+| Problem → Gap | ✅ | Masalah bottleneck akibat data sensor berfrekuensi tinggi terhubung jelas dengan gap bahwa 5 jurnal sebelumnya hanya menguji database menggunakan data statis di komputer, belum ada yang memakai aliran data real-time dari alat fisik. |
+| Gap → RQ | ✅  | RQ langsung menanyakan perbandingan kecepatan waktu simpan dan tarikan beban server saat menerima aliran data terus-menerus (continuous streaming), sangat pas untuk menutup gap tersebut.|
+| RQ → Hypothesis | ✅ | Hipotesis (H1) secara spesifik menjawab RQ dengan memprediksi PostgreSQL akan lebih unggul (waktu simpan lebih cepat dan RAM/CPU lebih efisien minimal 10%).|
+| Hypothesis → Metric | ✅ | Kecepatan dikonversi menjadi metrik konkret berupa insert latency dalam satuan milidetik (ms), dan efisiensi diukur dari persentase (%) pemakaian RAM dan CPU server.|
+| Metric → System | ✅| Sistem dibuat modular (ESP32 sebagai pengirim, laptop sebagai server), sehingga skrip backend bisa presisi mencatat log milidetik, dan Task Manager komputer bisa memantau tarikan % CPU/RAM dengan akurat.|
+| System → Experiment |✅ | Desain eksperimen menggunakan skenario terisolasi secara bergantian pada sistem tersebut (tembak 10.000 data ke MySQL, bersihkan/ restart server, lalu tembak 10.000 data ke PostgreSQL) untuk menjaga keadilan alat uji.|
 
-**Koneksi mana yang paling lemah?** _______________________
+**Koneksi mana yang paling lemah?** rQ-> hipotesis karena  dalam pengujian mungkin meenyatakan 10 % lebih baik itu sulit karena mungkin selisih waktu yang akan dihasilkan akan sangat kecil satuan milidetik dan ada faktor faktor yang mungkin terjadi misal sensor yang tidak berfungsi, jari yang tidak menempel dan lainnya.
 **Bagaimana cara memperkuatnya?**
-> ___________________________________________________
+> melakukan uji t test dengan exel dan memastikan semua alat berjalan dengan baik serta saat pengujian penempelan jari benar benar diperhatikan 
 
-**Konsistensi horizontal — apakah istilah dan scope konsisten?** [ ] Ya / [ ] Tidak
+**Konsistensi horizontal — apakah istilah dan scope konsisten?** [❌] Ya / [ ] Tidak
 > Jika tidak, di bagian mana terjadi inkonsistensi? _________
 
 ---
@@ -128,14 +128,14 @@ Evaluasi proposal mini menggunakan rubrik.
 
 | Kriteria | Skor (1-3) | Justifikasi |
 |----------|-----------|-------------|
-| Koherensi | *Contoh: 2 — koneksi gap→RQ masih lemah karena gap belum cukup narrow* | |
-| Specificity | *Contoh: 3 — metrik (satisfaction 0-100, RMSE) sudah terdefinisi numerik* | |
-| Feasibility | | |
-| Rigor | | |
+| Koherensi | 3 |  Rantai logikanya sangat nyambung dari masalah awal (bottleneck akibat data berfrekuensi tinggi) , gap penelitian yang menyatakan belum ada uji pakai aliran data real-time , sampai ke desain eksperimen yang pas untuk menjawab hal tersebut.|
+| Specificity | 3 | Metrik yang digunakan sudah sangat spesifik dan terdefinisi numerik, yaitu insert latency dalam satuan milidetik (ms) serta persentase (%) penggunaan RAM dan CPU server.|
+| Feasibility | 3 | Eksperimen sangat masuk akal dan mudah dijalankan karena hanya menggunakan alat yang sudah ada (laptop server, mikrokontroler ESP32, sensor MAX30102) dan diuji di lingkungan Wi-Fi lokal tanpa butuh biaya server cloud mahal.|
+| Rigor | 3 | Pengujiannya dirancang sangat adil dan ketat, contohnya dengan kewajiban membersihkan cache dan me-restart server sebelum mengganti pengujian dari MySQL ke PostgreSQL , serta mengisolasi jaringan agar hasilnya murni.|
 
-**Skor total:** _____ / 12
+**Skor total:** 12/ 12
 
-**Apakah proposal siap untuk fase eksekusi?** [ ] Ya / [ ] Belum
+**Apakah proposal siap untuk fase eksekusi?** [❌] Ya / [ ] Belum
 > Jika belum, apa yang perlu diperbaiki? __________________
 
 ---
@@ -144,8 +144,11 @@ Evaluasi proposal mini menggunakan rubrik.
 
 > Dari seluruh proses WS-01 sampai WS-08, bagian mana yang paling mudah dan paling sulit? Mengapa? Apa yang akan dilakukan berbeda jika mengulang dari awal?
 
-**Bagian termudah:** ____________________________________
-**Bagian tersulit:** ____________________________________
+**Bagian termudah:** 
+> Menentukan variabel dan metrik, karena tujuannya dari awal sudah jelas ingin menguji mana yang paling cepat (diukur pakai milidetik) dan paling ringan (diukur pakai % tarikan memori).
+
+**Bagian tersulit:** 
+> Mengidentifikasi Research Gap (celah penelitian), karena butuh waktu lama untuk membaca dan membandingkan banyak jurnal sebelumnya demi membuktikan kalau pengujian database menggunakan data spam/streaming dari alat fisik (bukan sekadar data statis) memang benar-benar belum ada yang meneliti.
+
 **Yang akan dilakukan berbeda:**
-> ___________________________________________________
-> ___________________________________________________
+> Lebih rapi dalam menyusun rancangan arsitektur kodingan penangkap datanya (data ingestion) dari awal, supaya nanti pas proses eksekusi tidak perlu banyak perombakan format timestamp saat datanya mulai masuk beruntun.
