@@ -100,15 +100,14 @@ Verifikasi apakah semua data yang direncanakan sudah terkumpul.
 
 | Skenario | Run Direncanakan | Run Tercatat | Missing | Alasan |
 |----------|-----------------|-------------|---------|--------|
-| *Contoh: BERT, DS-1* | *10* | *10* | *0* | *—* |
-| *LSTM, DS-3* | *10* | *8* | *2* | *OOM pada run 7 & 9* |
-| | | | | |
-| | | | | |
+| Pengujian MySQL (35 Sampel) | 35.000 |  34.965 | 35 | Bottleneck / antrean macet pada web server (Apache) saat menerima hantaman data frekuensi tinggi. |
+| Pengujian PostgreSQL (35 Sampel) | 35.000 | 34.959 | 41 | Overload resource memori (RAM) server yang lebih berat, menyebabkan timeout atau packet loss. |
 
-**Total expected:** ____ | **Total actual:** ____ | **Missing:** ____
+
+**Total expected:** 70.000 | **Total actual:** 69.924 | **Missing:** 76
 
 **Keputusan untuk data missing:**
-> ___________________________________________________
+> Diterima dan dibiarkan apa adanya sebagai temuan riset (Research Finding). Data yang hilang tidak diulang/dibuang karena justru menjadi bukti nyata (gap) adanya perbedaan tingkat keandalan (reliability) dan batas performa antara MySQL dan PostgreSQL saat menangani aliran data sensor berkecepatan tinggi.
 
 ---
 
@@ -118,25 +117,26 @@ Periksa data Anda untuk anomali. Gunakan metode IQR atau z-score.
 
 **Dataset sampel (atau data Anda sendiri):**
 
-| Run | Accuracy (%) |
+| Run | Data Hilang / Loss (Baris) |
 |-----|-------------|
-| 1 | *91.2* |
-| 2 | *90.8* |
-| 3 | *91.5* |
-| 4 | *78.3* |
-| 5 | *91.0* |
+| 1 | 0 |
+| 2 | 0 |
+| 3 | 1 |
+| 4 | 15 |
+| 5 | 0 |
 
 **Deteksi outlier:**
-- Q1 = ____ | Q3 = ____ | IQR = ____
-- Batas bawah (Q1 - 1.5×IQR) = ____
-- Batas atas (Q3 + 1.5×IQR) = ____
-- Outlier terdeteksi: ____
+> urutkan data dari terkecil ke terbesar terlebih dahulu  0, 0, 0, 1, 15
+- Q1 = 0 | Q3 = 1 | IQR = 1
+- Batas bawah (Q1 - 1.5×IQR) = 0 - 1.5(1) = -1.5
+- Batas atas (Q3 + 1.5×IQR) = 1 + 1.5(1) = 2.5
+- Outlier terdeteksi: 15 (Karena angka 15 jauh melampaui batas atas 2.5)
 
 **Investigasi (untuk setiap outlier):**
 
 | Outlier | Nilai | Kemungkinan Penyebab | Keputusan |
 |---------|-------|---------------------|-----------|
-| *Run 4* | *78.3* | *Contoh: thermal throttling setelah 3 run berturut* | *Re-run dengan cooling interval* |
+| Run 4 | 15 | Terjadi bottleneck (kemacetan antrean koneksi) parah secara tiba-tiba di web server XAMPP akibat hantaman data ESP32 yang beruntun tanpa jeda.| Re-run dengan cooling interval (jeda waktu) untuk melihat apakah server bisa pulih, ATAU jadikan sebagai bukti riset batas toleransi database. |
 
 ---
 
@@ -144,12 +144,12 @@ Periksa data Anda untuk anomali. Gunakan metode IQR atau z-score.
 
 Buat laporan validasi ringkas untuk dataset eksperimen Anda.
 
-**1. Completeness:** ____% data terkumpul
-**2. Format:** [ ] Konsisten / [ ] Ada inkonsistensi: ____
-**3. Range check (anomali):** ____
-**4. Logic check:** [ ] Parameter sesuai plan / [ ] Ada ketidaksesuaian: ____
+**1. Completeness:** 99.89% data terkumpul (69.924/70000*100)
+**2. Format:** [x] Konsisten / [ ] Ada inkonsistensi: ____
+**3. Range check (anomali):** Terdapat 1 nilai outlier (15 baris data hilang) pada pengujian MySQL Run 4.
+**4. Logic check:** [x] Parameter sesuai plan / [ ] Ada ketidaksesuaian: ____
 
-**Kesimpulan:** [ ] Data siap analisis / [ ] Perlu tindakan: ____
+**Kesimpulan:** [x] Data siap analisis / [ ] Perlu tindakan: ____
 
 ---
 
@@ -157,5 +157,5 @@ Buat laporan validasi ringkas untuk dataset eksperimen Anda.
 
 > Apa perbedaan antara "data yang benar" dan "data yang dipercaya"? Mengapa proses validasi formal diperlukan meskipun data dikumpulkan secara otomatis?
 
-> ___________________________________________________
-> ___________________________________________________
+> Data yang benar adalah data yang secara teknis sukses direkam dan ditulis oleh sistem ke dalam database tidak error format atau corrupt. Sedangkan Data yang dipercaya adalah data yang tidak hanya benar secara format, tetapi juga logis, konsisten, merepresentasikan kondisi lapangan secara faktual, dan bisa dipertanggungjawabkan asal-usul anomalinya.
+> Proses validasi formal tetap mutlak diperlukan meskipun pengumpulan data dilakukan secara otomatis oleh skrip atau sistem (seperti web dan ESP32), karena sistem otomatis tidak bisa mendeteksi kewajaran. Sistem otomatis bisa saja mengalami bottleneck, timeout, atau antrean macet yang menyebabkan data hilang secara tak kasat mata (seperti hilangnya 15 baris pada run ke-4). Validasi formal memastikan peneliti menyadari anomali teknis tersebut, mencari penyebabnya, dan tidak mengambil kesimpulan mentah mentah bahwa mesin  selalu otomatis sempurna.
