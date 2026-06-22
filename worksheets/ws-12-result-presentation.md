@@ -92,17 +92,17 @@ Bias Check:
 
 Buat tabel hasil eksperimen Anda (boleh dengan data simulasi jika belum punya data riil).
 
-| Skenario | Metrik 1 (mean ± std) | Metrik 2 (mean ± std) | n |
+| Skenario | Waktu Simpan / Latency (mean ± std) | Beban RAM Puncak (mean ± std) | n |
 |----------|----------------------|----------------------|---|
-| *Contoh: BERT-base* | *88.4 ± 1.2%* | *45.2 ± 3.1 min* | *10* |
-| | | | |
-| | | | |
+| MySQL | 2.12 ± 0.36 ms | 86.65 ± 2.61 % | 35 |
+| PostgreSQL | 4.46 ± 0.55 ms | 86.25 ± 1.86 % | 35 |
+
 
 **Checklist tabel:**
-- [ ] Self-contained (judul jelas, satuan ada, N tercantum)
-- [ ] Mean ± std (bukan single number)
-- [ ] Diurutkan berdasarkan metrik utama
-- [ ] Format konsisten di semua baris
+- [V] Self-contained (judul jelas, satuan ada, N tercantum)
+- [V] Mean ± std (bukan single number)
+- [V] Diurutkan berdasarkan metrik utama
+- [V] Format konsisten di semua baris
 
 ---
 
@@ -112,9 +112,9 @@ Rencanakan 2-3 grafik untuk menyajikan data dari Latihan 1. Setiap grafik = satu
 
 | # | Jenis Grafik | Pesan | Data yang Digunakan |
 |---|-------------|-------|---------------------|
-| 1 | *Contoh: Bar chart + error bar* | *Perbandingan accuracy antar 3 model* | *Mean accuracy ± std* |
-| 2 | *Box plot* | *Distribusi F1 per model* | *Semua run F1* |
-| 3 | *Scatter plot* | *Trade-off accuracy vs training time* | *Mean accuracy vs mean time* |
+| 1 | Bar chart + error bar | Perbandingan rata-rata kecepatan waktu simpan (latency) antara MySQL dan PostgreSQL. | Rata-rata Latency (mean ± std) dari Latihan 1. |
+| 2 | Box plot | Distribusi stabilitas waktu simpan dan deteksi anomali/kemacetan data pada masing-masing database. | Seluruh 35 run data Latency MySQL dan PostgreSQL. |
+| 3 | Scatter plot | Trade-off (hubungan tarik-ulur) antara Kecepatan (Latency) vs Beban Server (RAM Puncak). | Seluruh run Latency vs RAM dari kedua database. |
 
 ---
 
@@ -126,13 +126,13 @@ Evaluasi visualisasi berikut untuk bias (skenario dari contoh):
 
 | Pertanyaan | Jawaban |
 |-----------|---------|
-| Apakah Y-axis menyesatkan? | *Contoh: Ya — A terlihat 2× B padahal beda 0.4%* |
-| Apakah error bar ditampilkan? | |
-| Apakah semua kondisi ditampilkan? | |
-| Apa solusinya? | |
+| Apakah Y-axis menyesatkan? | Contoh: Ya — A terlihat 2x B padahal beda 0.4% |
+| Apakah error bar ditampilkan? | Tidak. Akibatnya, audiens tidak tahu apakah selisih 0,4% itu benar-benar terbukti secara statistik atau sekadar kebetulan akibat variansi data uji.|
+| Apakah semua kondisi ditampilkan? | Belum tentu. Skenario hanya menyajikan hasil akhir rata-rata akurasi, tetapi menyembunyikan informasi jumlah sampel (N) dan sebaran variansinya. |
+| Apa solusinya? | Ubah titik awal sumbu Y (Y-axis) agar dimulai dari 0%, bukan 90%. Kemudian, tambahkan error bar pada puncak batang grafik untuk menunjukkan rentang standar deviasi secara jujur. |
 
 **Evaluasi grafik Anda sendiri dari Latihan 2:**
-- [ ] Semua bias check lulus
+- [v] Semua bias check lulus
 - [ ] Ada yang perlu diperbaiki: ____
 
 ---
@@ -141,5 +141,6 @@ Evaluasi visualisasi berikut untuk bias (skenario dari contoh):
 
 > Mengapa tabel dan grafik keduanya diperlukan — tidak cukup salah satu saja? Pernahkah Anda membuat grafik yang (tanpa sengaja) menyesatkan?
 
-> ___________________________________________________
-> ___________________________________________________
+> Tabel dan grafik memiliki fungsi kognitif yang saling melengkapi. Tabel mutlak diperlukan untuk menyajikan angka eksak dan presisi matematis tertinggi (misalnya untuk mencatat nilai latency spesifik di angka 4,46 ms atau beban RAM 86,25%). Namun, otak manusia kesulitan memproses pola atau tren hanya dari deretan angka yang panjang. Di situlah Grafik berperan krusial untuk menerjemahkan angka tersebut menjadi wujud visual yang bisa langsung dipahami dalam hitungan detik, menyoroti perbandingan, atau memperlihatkan sekumpulan data macet (bottleneck) yang terpental menjadi anomali.
+
+>Terkait pembuatan grafik yang menyesatkan, hal itu sangat mungkin terjadi tanpa sengaja. Contoh klasiknya adalah memotong pangkal sumbu Y tidak dari angka 0 (misalnya dimulai dari batas bawah nilai metrik). Hal ini membuat selisih sepersekian milidetik antara dua sistem terlihat sebagai jurang perbedaan performa yang sangat masif dan dramatis di mata audiens, padahal kenyataannya perbedaan tersebut sangat tipis jika dilihat dari skala penuh. Oleh karena itu, bias detection sangat penting sebelum hasil riset dipublikasikan.
