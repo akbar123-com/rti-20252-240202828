@@ -132,8 +132,6 @@ Buat consistency matrix untuk memverifikasi internal consistency paper Anda.
 
 |  | Intro | Method | Result | Discussion | Conclusion |
 |--|-------|--------|--------|-----------|-----------|
-| *Contoh: RQ1* | *✓* | *✓* | *✓* | *✓* | *✓* |
-| *Contoh: Metrik-X* | *✗ ←* | *✗ ←* | *✓* | *✗ ←* | *✗ ←* |
 | RQ1 (Perbandingan Waktu Simpan & RAM) | ✓| ✓| ✓| ✓| ✓|
 | RQ2 (Tingkat Keandalan / Data Loss) | X| ~| ✓| ✓|✓ |
 | Metrik utama (Latency, RAM, Loss) | ~| ✓|✓ | ✓| ✓|
