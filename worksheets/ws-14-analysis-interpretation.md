@@ -116,13 +116,13 @@ Tentukan uji statistik yang tepat untuk eksperimen Anda.
 
 | Pertanyaan | Jawaban |
 |-----------|---------|
-| Berapa grup yang dibandingkan? | *Contoh: 3 (BERT, LSTM, SVM)* |
-| Apakah data berpasangan (paired)? | |
-| Apakah distribusi normal? (uji normalitas) | |
-| **Uji yang dipilih:** | |
-| **Justifikasi:** | |
+| Berapa grup yang dibandingkan? | 2 (MySQL dan PostgreSQL)|
+| Apakah data berpasangan (paired)? |Tidak (Independen). Pengujian dilakukan secara terpisah pada dua sistem yang berbeda, bukan menguji satu database yang sama sebelum dan sesudah perlakuan.|
+| Apakah distribusi normal? (uji normalitas) | Ya. (Berdasarkan jumlah sampel N=35 di tiap grup, data dapat diasumsikan berdistribusi normal merujuk pada Central Limit Theorem). |
+| **Uji yang dipilih:** | Independent Samples T-Test|
+| **Justifikasi:** | Merupakan metode paling tepat untuk membandingkan perbedaan rata-rata (mean) antara dua kelompok data berskala rasio/numerik (seperti waktu simpan dan RAM) yang saling bebas (tidak berpasangan). |
 
-**Effect size yang akan dilaporkan:** [ ] Cohen's d / [ ] Eta-squared / [ ] Lainnya: ____
+**Effect size yang akan dilaporkan:** [x] Cohen's d / [ ] Eta-squared / [ ] Lainnya: ____
 
 ---
 
@@ -133,18 +133,18 @@ Gunakan data berikut (atau data riil Anda) untuk berlatih interpretasi.
 **Data:**
 | Model | Accuracy (mean ± std) | n |
 |-------|----------------------|---|
-| A | 89.2 ± 1.5 | 10 |
-| B | 87.8 ± 2.1 | 10 |
+| MySQL | 2.12 ± 0.36 ms | 35 |
+| PostgreSQL | 4.46 ± 0.55 ms | 35 |
 
-p = 0.045, Cohen's d = 0.74, CI 95% = [0.03, 2.77]
+p < 0.001, Cohen's d = 5.08, CI 95% = [2.11, 2.56]
 
 | Aspek | Interpretasi |
 |-------|-------------|
-| Signifikansi statistik | *Contoh: p < 0.05 → signifikan pada α=0.05* |
-| Effect size | *Contoh: d=0.74 → medium-to-large effect* |
-| Practical significance | |
-| Hubungan ke RQ | |
-| Perbandingan literatur | |
+| Signifikansi statistik | p < 0.001 signifikan pada a = 0.05 Terdapat perbedaan kecepatan waktu simpan (latency) yang sangat meyakinkan secara statistik antara MySQL dan PostgreSQL. |
+| Effect size | d= 5.08 Huge effect (Efek sangat besar). Perbedaan performa kedua database sangat mencolok dan absolut, bukan diakibatkan oleh variasi acak atau kebetulan. |
+| Practical significance | Berdampak kritis di dunia nyata. Selisih keterlambatan PostgreSQL yang mencapai sekitar 2,34 ms per baris data mungkin terlihat sepele. Namun, jika dihadapkan pada aliran data sensor detak jantung frekuensi tinggi secara terus-menerus, delay ini akan menumpuk dan menyebabkan bottleneck sistem.|
+| Hubungan ke RQ | Menjawab Rumusan Masalah. Pengujian membuktikan secara empiris bahwa MySQL jauh lebih ringan dan optimal untuk menangani operasi insert data sensor real-time berkecepatan tinggi dibandingkan PostgreSQL. |
+| Perbandingan literatur | Sejalan dengan literatur. Hasil ini menguatkan teori bahwa database relasional yang berfokus pada kecepatan baca-tulis sederhana (seperti MySQL) lebih tangguh untuk sistem IoT, dibandingkan database berskala enterprise (PostgreSQL) yang memakan waktu lebih lama karena proses validasi data yang ketat. |
 
 ---
 
@@ -156,18 +156,18 @@ Latih kemampuan failure analysis: hipotesis TIDAK didukung. Apa yang bisa dipela
 
 | Pertanyaan | Jawaban |
 |-----------|---------|
-| Apakah ini "gagal"? | *Contoh: Bukan gagal total — hipotesis tidak terdukung adalah temuan yang valid dan bisa menjadi kontribusi.* |
-| Kemungkinan penyebab? | *Contoh: Metode baru menambah kompleksitas komputasi (+40% waktu) tanpa peningkatan F1 yang cukup — overhead tidak sebanding.* |
-| Boundary condition? | *Contoh: Metode ini hanya efektif ketika data ≥ 10.000 record; di dataset kecil (<1.000), baseline lebih stabil.* |
-| Insight yang bisa diambil? | *Contoh: Ada trade-off ukuran data vs kompleksitas — rekomendasikan hybrid approach yang adaptif berdasarkan ukuran dataset.* |
-| Apakah layak dilaporkan? Mengapa? | *Contoh: Ya — negative result + boundary condition analysis adalah kontribusi riset yang diakui komunitas (ex: ACL, SIGIR). Mencegah riset duplikasi yang berulang.* |
+| Apakah ini "gagal"? | Bukan gagal total. Ini adalah negative result yang valid. Hipotesis yang tidak terdukung secara statistik (p > 0.05) tetap memberikan informasi penting bahwa metode baru tersebut tidak lebih superior dari metode lama (baseline). |
+| Kemungkinan penyebab? | Metode baru mungkin terlalu kompleks (overfitting pada data tertentu) atau penambahan arsitekturnya justru memicu noise yang membuat akurasinya merosot di bawah baseline yang lebih sederhana. |
+| Boundary condition? | Metode baru ini mungkin tidak cocok untuk dataset umum. Kemungkinan metode ini baru akan mengungguli baseline jika diuji pada kondisi data spesifik (misal: data dengan tingkat noise ekstrem atau dataset yang jauh lebih masif). |
+| Insight yang bisa diambil? | Kesederhanaan terkadang lebih baik (Occam's razor). Kompleksitas komputasi yang tinggi tidak selalu berbanding lurus dengan peningkatan performa. |
+| Apakah layak dilaporkan? Mengapa? | Sangat layak. Melaporkan hasil negatif ini akan mencegah terjadinya publication bias. Peneliti lain di masa depan jadi tahu batasan metode ini dan tidak membuang waktu mengulangi eksperimen buntu yang sama.  |
 
 **Limitation terkait:**
 | Jenis | Ancaman | Dampak |
 |-------|---------|--------|
-| *Contoh: Statistical* | *Contoh: Hanya 5 run per skenario* | *Power test rendah* |
-| | | |
-| | | |
+| Statistical | Jumlah sampel data uji (N) terlalu kecil. | Power test rendah, sehingga uji statistik gagal mendeteksi perbedaan nyata yang mungkin ada (terjadi Type II Error).|
+|Methodological |Pemilihan metrik F1 mungkin kurang sensitif untuk distribusi kelas data yang sangat timpang (class imbalance). |Penilaian terhadap performa asli metode baru menjadi bias atau tidak terukur secara proporsional.|
+| Environmental |Perbedaan latensi jaringan atau fluktuasi beban CPU saat menjalankan metode baru vs baseline. |Hasil skor menjadi tidak stabil dan perbandingan menjadi kurang adil (apple-to-apple). |
 
 ---
 
@@ -175,5 +175,4 @@ Latih kemampuan failure analysis: hipotesis TIDAK didukung. Apa yang bisa dipela
 
 > Apakah "failure" dalam riset benar-benar gagal, atau justru kontribusi? Bagaimana failure analysis mengubah cara Anda melihat hasil negatif?
 
-> ___________________________________________________
-> ___________________________________________________
+> Dalam dunia riset akademik, hipotesis yang ditolak bukanlah sebuah aib atau "kegagalan", melainkan sebuah kontribusi ilmiah yang sama berharganya dengan penemuan positif. Selama eksperimen dirancang dengan metodologi yang ketat, jujur, dan parameternya jelas (seperti saat menguji batas bottleneck arsitektur server secara terisolasi), hasil yang buruk atau tidak signifikan tetaplah sebuah fakta. Failure analysis sangat mengubah cara pandang saya; saya menjadi sadar bahwa membuktikan sebuah sistem "tidak mampu" atau sebuah metode "tidak bekerja" adalah langkah krusial untuk mencegah ilmuwan lain masuk ke lubang yang sama, sekaligus mendorong komunitas untuk mencari alternatif solusi yang jauh lebih baik. Riset yang baik adalah riset yang transparan, bukan riset yang datanya dipaksakan sempurna.
