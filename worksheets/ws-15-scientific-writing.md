@@ -116,13 +116,13 @@ Buat outline paper untuk riset Anda menggunakan struktur IMRAD.
 
 | Section | Konten Utama (2-3 kalimat) | Target Kata |
 |---------|---------------------------|------------|
-| Abstract | *Contoh: Sistem rekomendasi memiliki akurasi tinggi tapi satisfaction rendah. Studi ini menguji CF+context signal. Hasil: satisfaction naik 38% tanpa penurunan RMSE signifikan.* | 200-250 |
-| Introduction | *Contoh: Konteks: gap antara akurasi dan kepuasan pengguna. Gap: tidak ada studi yang mengkombinasikan CF+context. RQ: apakah CF+context meningkatkan satisfaction?* | 500-700 |
-| Related Work | | 700-1000 |
-| Method | | 800-1200 |
-| Results | | 500-800 |
-| Discussion | | 600-900 |
-| Conclusion | | 200-400 |
+| Abstract | Sistem pemantauan detak jantung real time menuntut database dengan kinerja tinggi. Studi ini membandingkan performa MySQL dan PostgreSQL dalam menangani aliran data frekuensi tinggi dari sensor MAX30102. Hasil menunjukkan MySQL memiliki latensi lebih unggul, namun sempat mengalami data loss saat beban puncak (bottleneck). | 200-250 |
+| Introduction |  Adanya kebutuhan database yang cepat dan stabil untuk merekam data medis IoT. Gap: Belum ada studi spesifik yang menguji batas performa MySQL vs PostgreSQL menggunakan hantaman data kontinu dari sensor MAX30102. RQ: Arsitektur database mana yang lebih optimal dari segi waktu simpan (latency), RAM, dan keandalan? | 500-700 |
+| Related Work | Sebagian besar literatur terdahulu hanya berfokus pada akurasi klinis sensor MAX30102 atau performa database pada data IoT umum berskala kecil. Studi ini melengkapi literatur tersebut dengan menguji batas toleransi (stress-test) database menggunakan data berfrekuensi tinggi.| 700-1000 |
+| Method | Data detak jantung di-generate menggunakan mikrokontroler dan sensor MAX30102 yang dikirim langsung ke web server lokal. Pengumpulan data dilakukan sebanyak 35 run untuk tiap database, kemudian dianalisis perbedaan rata-ratanya menggunakan Independent Sample T-Test di SPSS. | 800-1200 |
+| Results | Uji statistik membuktikan MySQL jauh lebih cepat dengan rata-rata waktu simpan 2.12 ms dibanding PostgreSQL yang mencapai 4.46 ms (p < 0.001) Namun, pada deteksi anomali, MySQL mencatat insiden data loss sebanyak 15 baris pada salah satu run akibat antrean sistem. | 500-800 |
+| Discussion | Terdapat trade off yang jelas arsitektur MySQL sangat cepat untuk penulisan data sederhana, namun lebih rentan terhadap bottleneck ekstrem. Sebaliknya, PostgreSQL lebih lambat karena proses validasi relasionalnya yang ketat, namun berpotensi lebih stabil dalam menjaga integritas data tanpa loss.| 600-900 |
+| Conclusion | MySQL direkomendasikan untuk arsitektur IoT medis yang memprioritaskan kecepatan real-time. Namun, perancang sistem harus menyiapkan mekanisme penanganan antrean (queue handling) untuk mencegah hilangnya data berharga saat sensor mengirimkan paket data secara masif. | 200-400 |
 
 ---
 
@@ -134,20 +134,20 @@ Buat consistency matrix untuk memverifikasi internal consistency paper Anda.
 |--|-------|--------|--------|-----------|-----------|
 | *Contoh: RQ1* | *✓* | *✓* | *✓* | *✓* | *✓* |
 | *Contoh: Metrik-X* | *✗ ←* | *✗ ←* | *✓* | *✗ ←* | *✗ ←* |
-| RQ1 | | | | | |
-| RQ2 | | | | | |
-| Metrik utama | | | | | |
-| Variabel IV | | | | | |
-| Variabel DV | | | | | |
-| Klaim/kontribusi | | | | | |
+| RQ1 (Perbandingan Waktu Simpan & RAM) | ✓| ✓| ✓| ✓| ✓|
+| RQ2 (Tingkat Keandalan / Data Loss) | X| ~| ✓| ✓|✓ |
+| Metrik utama (Latency, RAM, Loss) | ~| ✓|✓ | ✓| ✓|
+| Variabel IV (Jenis Database) |✓ | ✓|✓ | ✓| ✓|
+| Variabel DV (Waktu Simpan, RAM, Loss) | ~| ✓| ✓ | ✓| ✓|
+| Klaim/kontribusi (MySQL cepat tapi rentan) | ✓| ✓| ✓| ✓|✓ |
 
 **Isi setiap sel:** ✓ (ada & konsisten), ✗ (missing), ~ (ada tapi inkonsisten)
 
 **Inkonsistensi yang ditemukan:**
-> ___________________________________________________
+> Terdapat variabel siluman (missing variable) pada desain awal riset. Variabel "Data Loss" (Data Hilang) belum dimasukkan ke dalam Rumusan Masalah (RQ2) secara eksplisit di bagian Introduction. Variabel ini baru muncul secara tiba-tiba di bagian Result karena ditemukannya anomali 15 data yang hilang saat stress-test MySQL, lalu dibahas secara panjang lebar sebagai kelemahan utama di Discussion dan ditarik menjadi kesimpulan di Conclusion. Hal ini membuat alur paper menjadi inkonsisten dari depan ke belakang.
 
 **Tindakan perbaikan:**
-> ___________________________________________________
+> Melakukan revisi mundur (backtracking) pada bagian Introduction dengan menambahkan RQ2 yang secara spesifik menanyakan tingkat keandalan (faktor Data Loss) saat menghadapi hantaman data frekuensi tinggi. Selain itu, memperbarui bagian Method dengan menambahkan paragraf yang menjelaskan secara teknis bagaimana Data Loss diukur dan direkam selama proses mikrokontroler mengirimkan data sensor MAX30102 ke server lokal.
 
 ---
 
@@ -156,22 +156,22 @@ Buat consistency matrix untuk memverifikasi internal consistency paper Anda.
 Ambil satu paragraf dari tulisan Anda (atau tulis paragraf baru) dan evaluasi kualitasnya.
 
 **Paragraf asli:**
-> (tempel paragraf Anda di sini)
+>Pengujian ini dilakukan untuk melihat performa dari kedua database. Kita memakai sensor detak jantung untuk mengirim data ke server. Hasilnya MySQL lebih bagus dari PostgreSQL karena waktunya lebih cepat. Tapi MySQL ada data yang hilang saat servernya sibuk banget, sedangkan PostgreSQL aman-aman saja.
 
 | Kriteria | Evaluasi | Perbaikan |
 |----------|---------|-----------|
-| Clarity | *Contoh: kalimat ke-3 ambigu — "performa" bisa berarti accuracy atau speed* | *Ubah menjadi: "accuracy meningkat..."* |
-| Precision | | |
-| Conciseness | | |
+| Clarity | Kata "performa", "lebih bagus", dan "sibuk banget" terlalu ambigu, subjektif, dan tidak baku. | Ubah menjadi istilah teknis: "latensi", "waktu simpan", dan "beban puncak antrean". |
+| Precision | "Waktunya lebih cepat" dan "data yang hilang" tidak memiliki angka pasti. Nama sensor tidak disebutkan. | Masukkan angka statistik spesifik (2.12 ms vs 4.46 ms, dan 15 baris data hilang), serta nama sensor (MAX30102).|
+| Conciseness |Kalimat "Kita memakai sensor detak jantung untuk mengirim data ke server" terlalu bertele-tele dan bergaya bahasa lisan (menggunakan kata "Kita"). | Gabungkan dan padatkan menjadi satu kalimat pengantar berstruktur pasif/akademis yang langsung menuju inti eksperimen.|
 
 **Paragraf setelah perbaikan:**
-> (tulis paragraf yang sudah diperbaiki)
-
+> Pengujian ini mengevaluasi latensi dan keandalan MySQL dan PostgreSQL dalam menangani aliran data frekuensi tinggi dari sensor MAX30102. Uji statistik menunjukkan MySQL memiliki rata-rata waktu simpan yang secara signifikan lebih cepat (2.12 ms) dibandingkan PostgreSQL (4.46 ms). Meskipun unggul dalam kecepatan, MySQL mengalami data loss sebanyak 15 baris pada saat beban puncak, sementara PostgreSQL terbukti lebih stabil dalam menjaga integritas data tanpa adanya data yang hilang.
 ---
 
 ## Refleksi
 
 > Apa perbedaan antara menulis "tentang" riset dan menulis sebagai "argumen" riset? Bagaimana urutan penulisan (Method → Discussion → Introduction) mengubah kualitas tulisan?
 
-> ___________________________________________________
-> ___________________________________________________
+> Menulis tentang riset ibarat hanya membuat laporan jurnal kegiatan sekadar menceritakan langkah-langkah yang dilakukan secara datar. Sebaliknya, menulis sebagai argumen riset berarti setiap kalimat disusun dengan tujuan menyajikan bukti empiris untuk meyakinkan pembaca atau menjawab rumusan masalah (misalnya, menarasikan trade-off antara kecepatan MySQL vs keandalan PostgreSQL dengan angka pasti).
+
+> Terkait urutan penulisan yang dibalik (mulai dari Method & Result dahulu, baru ke Introduction di akhir), hal ini sangat mengubah kualitas tulisan menjadi jauh lebih tajam dan konsisten. Seperti pengalaman pada Latihan Consistency Matrix sebelumnya, temuan tak terduga di lapangan (seperti adanya outlier data loss) sering kali baru terlihat di bagian hasil. Dengan menulis Introduction paling akhir, kita dapat menyelaraskan rumusan masalah agar benar-benar "menjemput" temuan penting tersebut, sehingga tidak ada variabel yang terkesan muncul tiba-tiba secara tidak logis di tengah tulisan.
