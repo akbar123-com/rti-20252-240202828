@@ -103,14 +103,14 @@ Periksa dataset Anda (atau dataset contoh) dan dokumentasikan masalah yang ditem
 
 | Masalah | Jumlah Kasus | Penanganan | Justifikasi |
 |---------|-------------|------------|-------------|
-| *Contoh: Missing di kolom "label"* | *12 dari 500 (2.4%)* | *Listwise deletion* | *< 5%, distribusi random (MCAR)* |
-| | | | |
-| | | | |
-| | | | |
+| Terdapat string teks ("ms" dan "%") pada kolom metrik numerik. | 70 dari 70 baris (100%) | String removal (Penghapusan karakter teks) | Perangkat lunak SPSS mewajibkan format Numeric murni untuk uji T-Test. |
+| Format pemisah desimal bawaan sistem (titik .) tidak terbaca. | 70 dari 70 baris (100%) | Find and Replace (Mengubah . menjadi ,) | Menyesuaikan regional settings OS agar tidak terjadi error "no valid cases". |
+| Nilai Outlier pada metrik Data Hilang MySQL (Run 4 = 15 baris).|1 dari 70 baris (1.4%) | Retain (Dipertahankan / Tidak dihapus) | Merupakan true anomaly (bukti batas toleransi bottleneck server), bukan error sensor.|
 
-**Jumlah data sebelum cleaning:** ____
-**Jumlah data setelah cleaning:** ____
-**Persentase data yang hilang/berubah:** ____%
+
+**Jumlah data sebelum cleaning:** 70 baris (gabungan 35 run MySQL dan 35 run PostgreSQL).
+**Jumlah data setelah cleaning:** 70 baris 
+**Persentase data yang hilang/berubah:** 0% data dihapus (Semua baris dipertahankan, hanya 100% mengalami perubahan format / re-formatting).
 
 ---
 
@@ -120,16 +120,17 @@ Tentukan apakah data Anda perlu normalisasi, dan jika ya, metode apa yang tepat.
 
 | Variabel | Range Asli | Distribusi | Outlier? | Metode Normalisasi | Alasan |
 |----------|-----------|-----------|----------|-------------------|--------|
-| *Contoh: response_time* | *0.1 – 45.2s* | *Right-skewed* | *Ya (45.2s)* | *Robust scaling* | *Ada outlier, perlu robust* || *Contoh: accuracy_score* | *0.72 – 0.95* | *Normal, narrow* | *Tidak* | *Tidak perlu* | *Sudah dalam [0,1], metode berbasis distance tidak digunakan* || | | | | | |
-| | | | | | |
+| Waktu Simpan (Latency) |1.5 – 5.5 ms | Mendekati Normal | Tidak | Min-Max Scaler (atau Z-Score) | Skala data kecil dan stabil, menjaga proporsi tanpa mengubah distribusi. |
+|Beban RAM |80 – 92 % | Left-skewed (Condong ke atas) | Tidak| Min-Max Scaler |Mengubah format persentase puluhan (80-92) menjadi seragam ke skala 0 hingga 1. |
+| Data Loss (Hilang)|0 – 15 baris| Sangat Right-skewed| Ya (15) |Robust Scaling | Memiliki outlier yang valid (bottleneck). Robust scaling kebal terhadap efek tarikan outlier ekstrem ini.|
 
-**Apakah normalisasi diperlukan?** [ ] Ya / [ ] Tidak
+**Apakah normalisasi diperlukan?** [x] Ya / [ ] Tidak
 **Justifikasi:**
-> ___________________________________________________
+> Rentang nilai antar variabel sangat timpang (Latency berskala satuan 1-5, sedangkan RAM berskala puluhan 80-100). Jika data ini kelak diolah menggunakan algoritma Machine Learning (seperti untuk memprediksi beban server), perbedaan skala ini akan membuat model bias dan menganggap RAM lebih penting daripada Latency hanya karena angkanya lebih besar. Normalisasi wajib dilakukan untuk menyamakan bobot semua parameter. (Catatan akademis: Namun untuk sekadar Uji T-Test di SPSS, normalisasi ini bersifat opsional karena T-Test tidak membandingkan skala antar-variabel secara menyilang).
 
 **Leakage check:**
-- [ ] Parameter dihitung dari training set saja
-- [ ] Normalisasi diterapkan setelah train-test split
+- [v] Parameter dihitung dari training set saja
+- [v] Normalisasi diterapkan setelah train-test split
 
 ---
 
@@ -140,16 +141,16 @@ Buat ringkasan preprocessing lengkap — dokumentasi yang cukup bagi orang lain 
 ```
 PREPROCESSING SUMMARY
 
-1. Dataset: ____________________
-2. Data awal: ____ records, ____ features
+1. Dataset: Perbandingan Performa Database IoT (MySQL vs PostgreSQL) dengan Sensor MAX30102
+2. Data awal: 70 records, 5 features
 3. Cleaning:
-   - Missing values: ____ kasus, metode: ____
-   - Duplikat: ____ kasus, tindakan: ____
-   - Error: ____ kasus, tindakan: ____
-4. Transformation: ____________________
-5. Normalisasi: ____ (metode), parameter dari ____
-6. Data akhir: ____ records, ____ features
-7. Leakage check: [ ] Lulus / [ ] Ada masalah
+   - Missing values: 0 kasus, metode: Tidak ada (N/A)
+   - Duplikat: 0 kasus, tindakan: Tidak ada (N/A)
+   - Error: 70 kasus, tindakan: Penghapusan string ("ms" dan "%") serta replace pemisah desimal (titik ke koma).
+4. Transformation: Konversi tipe data dari String menjadi Numeric murni.
+5. Normalisasi: Min-Max Scaler & Robust Scaling (metode), parameter dari Training Set
+6. Data akhir: 70 records, 5 features
+7. Leakage check: [x] Lulus / [ ] Ada masalah
 ```
 
 ---
@@ -158,5 +159,4 @@ PREPROCESSING SUMMARY
 
 > Apakah Anda pernah melakukan normalisasi "karena biasa dilakukan" tanpa mempertimbangkan apakah benar-benar diperlukan? Apa risiko over-preprocessing?
 
-> ___________________________________________________
-> ___________________________________________________
+> dulu saya sering mikir kalau semua data itu wajib dinormalisasi atau dibuang nilai ekstremnya cuma gara-gara ngikutin kebiasaan atau tutorial di internet. Ternyata, terlalu berlebihan memoles data (over-preprocessing) itu risikonya lumayan fatal. Pertama, makna asli datanya malah jadi susah dipahami untuk presentasi, misalnya kecepatan latency 4,43 ms malah berubah wujud jadi angka rasio 0,8 yang abstrak. Kedua, dan ini yang paling bahaya, kita bisa tanpa sadar menghilangkan fakta penting di lapangan. Contohnya di pengujian saya kemarin ada anomali 15 data yang hilang beruntun gara-gara server MySQL mengalami kemacetan antrean (bottleneck). Kalau angka yang nyleneh itu saya paksa hapus cuma demi bikin distribusi datanya kelihatan mulus dan normal, itu sama saja memanipulasi hasil uji. Padahal, angka eror tersebut justru temuan penting buat membuktikan di mana titik batas kemampuan maksimal dari database yang sedang diteliti.
