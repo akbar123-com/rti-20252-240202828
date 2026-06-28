@@ -5,7 +5,7 @@ Dokumen proposal penelitian — versi draf maupun final.
 ## Isi yang diharapkan
 
 - Proposal penelitian (latar belakang, rumusan masalah, tujuan, urgensi JWKS Endpoint Flooding)
-- Revisi proposal berdasarkan masukan pembimbing/reviewer
+- Revisi proposal berdasarkan temuan eksperimen (penyesuaian Research Question terkait anomali data loss pada MySQL dan postgree) agar selaras dengan hasil akhir.
 
 ## Berkas
 
