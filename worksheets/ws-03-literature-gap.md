@@ -10,6 +10,15 @@
 
 Literature review bukan merangkum paper satu per satu. Pendekatan yang benar adalah **concept-centric** — organisasi berdasarkan tema, metode, atau variabel. Tujuan: menemukan **pola, kontradiksi, dan gap**.
 
+**Perbandingan pendekatan Author-centric vs Concept-centric:**
+
+| Aspek | Author-centric (Hindari) | Concept-centric (Gunakan) |
+|-------|--------------------------|---------------------------|
+| Struktur | Per penulis/paper ("Rahman et al. menyatakan...") | Per konsep/metode ("Pendekatan berbasis transformer") |
+| Tujuan | Ringkasan isi paper | Perbandingan metode & identifikasi gap |
+| Contoh paragraph | "Rahman (2023) pakai CNN. Lee (2022) pakai LSTM. Zhang (2021) pakai RF." | "Tiga pendekatan dominan: CNN digunakan oleh 4 paper untuk representasi fitur visual; LSTM untuk data sekuensial; RF sebagai baseline klasik." |
+| Hasil akhir | Daftar paper | Peta pengetahuan + gap yang teridentifikasi |
+
 ### Empat Jenis Research Gap
 
 | Jenis Gap | Deskripsi | Contoh |
@@ -23,9 +32,16 @@ Gap terkuat = kombinasi 2+ jenis.
 
 ### Systematic Search Strategy
 
-1. **Database**: IEEE Xplore, ACM DL, Scopus, Google Scholar
+1. **Database utama**: IEEE Xplore, ACM DL, Scopus
+   - Akses IEEE/ACM melalui jaringan kampus atau VPN institusi
+   - Alternatif bebas biaya: Google Scholar, ResearchGate ([researchgate.net](https://www.researchgate.net)), arXiv ([arxiv.org](https://arxiv.org))
 2. **Boolean query** yang terdokumentasi eksplisit
-3. **Snowballing**: backward (telusuri referensi) + forward (cari yang mengutip)
+   - Contoh: `("anomaly detection" OR "intrusion detection") AND ("deep learning" OR "neural network") NOT ("medical imaging")`
+   - Gunakan tanda kutip untuk frasa eksak; AND/OR/NOT mengontrol scope
+3. **Snowballing** — dua arah:
+   - **Backward snowballing**: buka daftar referensi di paper kunci → telusuri paper yang dikutip
+   - **Forward snowballing**: di Google Scholar, klik "Cited by" di bawah paper kunci → temukan paper yang mengutipnya
+   - Ulangi 1–2 tingkat untuk membangun cakupan komprehensif
 4. Klaim "belum ada penelitian" harus didukung **bukti pencarian**
 
 ### Baseline Selection — 3 Kriteria
@@ -100,7 +116,12 @@ Baseline Selection:
 
 ## Latihan 1 — Concept-Centric Literature Table
 
-Gunakan topik riset dari WS-02. Cari minimal 5 paper relevan menggunakan Google Scholar atau database lain.
+Gunakan topik riset dari WS-02. Cari minimal 5 paper relevan menggunakan database akademik.
+
+> **Panduan pencarian:**
+> - Database: IEEE Xplore, ACM DL, Google Scholar, atau ResearchGate
+> - Tulis query Boolean yang digunakan: contoh `("object detection" OR "image classification") AND ("edge computing") NOT ("medical")`. Dokumentasikan query secara eksplisit.
+> - Akses gratis: buka Google Scholar → cari judul paper → klik [PDF] jika tersedia, atau akses lewat campus VPN
 
 **Topik riset:** Analisis Perbandingan Kinerja Database (MySQL vs PostgreSQL) untuk Penyimpanan Data Sensor Detak Jantung (MAX30102) Berfrekuensi Tinggi.
 **Query pencarian:** Perbandingan kinerja MySQL dan PostgreSQL IoT, database performance for heart rate sensor, penyimpanan data sensor MAX30102, real-time database streaming.

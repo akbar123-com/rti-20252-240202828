@@ -26,7 +26,15 @@ Etika mencegah distorsi yang disengaja (fabrikasi, cherry-picking). Validitas me
 
 ### Paradigma Riset
 
-Mata kuliah ini menggunakan pendekatan **Positivist** (fenomena TI bisa diukur objektif melalui eksperimen terkontrol) diperkuat **Design Science Research** (artefak dibuat sebagai instrumen pengujian hipotesis, bukan tujuan akhir).
+Mata kuliah ini menggunakan pendekatan **Positivist** (fenomena TI bisa diukur objektif melalui eksperimen terkontrol) diperkuat **Design Science Research** (DSR). Penting untuk membedakan keduanya:
+
+| Paradigma | Cara Kerja | Contoh di TI |
+|-----------|-----------|---------------|
+| **Positivis** | Uji hipotesis dengan eksperimen terkontrol | Apakah CNN lebih akurat dari RF pada dataset X? |
+| **Design Science Research** | Bangun artefak (sistem/model/framework) untuk menguji proposisi | Dapatkah arsitektur hybrid CNN+LSTM membuktikan peningkatan recall ≥5%? |
+| **Interpretivis** | Pahami makna melalui konteks & kualitatif | Bagaimana peneliti manafsirkan anomali data sensor IoT? |
+
+Dalam DSR, artefak **bukan tujuan akhir** — ia adalah instrumen untuk menghasilkan pengetahuan. Pertanyaan riset tetap harus difalsifikasi.
 
 ### Mode Berpikir Peneliti
 
@@ -80,6 +88,10 @@ Tanggal          : ____________________
 
 Pilih satu paper riset di bidang TI yang mengklaim "metode X meningkatkan performa." Telusuri setiap tahap Research Trust Model.
 
+> **Panduan pencarian paper:** Gunakan [IEEE Xplore](https://ieeexplore.ieee.org), [ACM Digital Library](https://dl.acm.org), atau Google Scholar. Pilih paper **tahun 2020 ke atas**, di topik yang Anda minati: deteksi anomali, klasifikasi citra, NLP, keamanan siber, IoT, dsb.
+>
+> **Contoh domain TI:** "Deteksi anomali lalu-lintas jaringan menggunakan CNN — akurasi meningkat 94% vs baseline SVM 87%." Distorsi potensial: apakah dataset normal/anomali seimbang? Apakah hanya diuji pada satu vendor traffic?
+
 **Paper yang dipilih:**
 
 > Judul: Implementasi Teknik Query Optimization Untuk Meningkatkan Performa SQL Server Pada Sistem Informasi Akademik.
@@ -122,6 +134,8 @@ justifikasi : Menghapus data cuma supaya hipotesisnya terbukti itu termasuk cura
 ## Latihan 3 — Posisi Paradigma
 
 **Topik riset:** Implementasi Teknik Query Optimization (Indexing & Stored Procedures) untuk Meningkatkan Performa SQL Server.
+
+> **Skala 1–5:** 1 = tidak sesuai sama sekali dengan topik ini, 5 = sangat sesuai dan dominan digunakan pada riset bertopik serupa.
 
 | Kriteria | Positivis | Interpretivis | Design Science |
 |----------|-----------|---------------|----------------|
