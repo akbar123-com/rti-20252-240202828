@@ -1,18 +1,21 @@
 # 03-teori
 
-Arsitektur, desain, dan landasan teori sistem — hasil **Tahap 1**.
+Arsitektur, landasan teori, dan metodologi analisis statistik — hasil **Tahap 1**, untuk penelitian **Analisis Perbandingan Performa Database MySQL dan PostgreSQL pada Sistem Pemantauan Data Sensor Detak Jantung Frekuensi Tinggi**.
 
 ## Isi yang diharapkan
 
-- Diagram alur resolusi kunci (mitigasi JWKS flooding)
-- Skema database PostgreSQL (`signing_keys`, `rate_limit_counters`)
-- Skema Redis (positive/negative cache)
-- Diagram arsitektur komponen (Gateway, Redis, PostgreSQL)
+* Diagram alur data pengujian (ESP32 → Logger → MySQL/PostgreSQL) & skema database
+* Landasan teori metrik performa (Insert Latency & Beban Server)
+* Konsep dasar & rumus Independent Samples T-Test
+* Perumusan hipotesis (H0/H1) dan kriteria pengambilan keputusan (signifikansi)
+* Tinjauan pustaka & research gap (Bab 2)
 
 ## Berkas
 
-- [arsitektur-dan-skema.md](arsitektur-dan-skema.md) — diagram Mermaid (arsitektur komponen, alur resolusi kunci, fail-closed/fail-open, ERD database), skema Redis, dan pemetaan ke implementasi kode
+* [`arsitektur-dan-skema.md`](arsitektur-dan-skema.md) — diagram Mermaid alur data, skema database MySQL & PostgreSQL, konfigurasi eksperimen, dan keputusan teknis.
+* [`landasan-teori-statistik.md`](landasan-teori-statistik.md) — landasan teori metrik performa, rumus Independent Samples T-Test, hipotesis, dan kriteria signifikansi.
+* [`tinjauan-pustaka.md`](tinjauan-pustaka.md) — draf Bab 2: State of the Art, Research Gap, Landasan Teori Konsep, & Definisi Operasional Variabel.
 
-## Acuan
+## Sumber
 
-Detail teknis lengkap Tahap 1 (status: selesai): [../09-docs/tahap-1-arsitektur-dan-skema-database.md](../09-docs/tahap-1-arsitektur-dan-skema-database.md)
+Disusun berdasarkan hasil pengerjaan WS-02 (Problem Statement & System Context), WS-03 (Literature Gap), WS-04 (RQ & Hypothesis), WS-05 (Variabel & Metrik), dan WS-06 (System-Experiment Mapping).
