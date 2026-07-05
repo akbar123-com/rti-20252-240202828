@@ -4,7 +4,7 @@ Landasan teori metrik performa dan metodologi uji statistik — hasil **Tahap 1*
 
 ## Isi Dokumen
 - Landasan Teori Metrik Performa Database (*Insert Latency* & Beban Server)
-- Konsep Dasar Pengujian *Independent Samples T-Test*
+- Konsep Dasar Pengujian *Paired Samples T-Test*
 - Perumusan Hipotesis Penelitian
 - Aturan Pengambilan Keputusan (Kriteria Signifikansi)
 
@@ -17,54 +17,57 @@ Dalam mengevaluasi performa sistem manajemen basis data relasional (MySQL dan Po
 * **Insert Latency (Waktu Simpan):** Diukur dalam satuan milidetik (ms), yaitu durasi sejak perintah `INSERT` dikirim ke database engine hingga data berhasil ditulis dan dikonfirmasi tersimpan. Semakin kecil nilainya, semakin cepat dan efisien database tersebut merespons.
 * **Beban Server (CPU/RAM Usage):** Diukur dalam persentase (%), merepresentasikan seberapa berat sumber daya komputasi yang ditarik oleh masing-masing database engine saat menahan hantaman data secara terus-menerus. Beban yang tinggi mengindikasikan potensi *bottleneck* yang dapat berujung pada penolakan data (*data loss*) jika dibiarkan melebihi kapasitas server.
 
-Kedua metrik ini bersifat *ratio scale* (memiliki nol absolut dan jarak antar nilai bermakna), sehingga memenuhi syarat untuk dianalisis menggunakan uji beda rata-rata parametrik seperti *Independent Samples T-Test*.
+Kedua metrik ini bersifat *ratio scale* (memiliki nol absolut dan jarak antar nilai bermakna), sehingga memenuhi syarat untuk dianalisis menggunakan uji beda rata-rata parametrik seperti *Paired Samples T-Test*.
 
 ---
 
-## 2. Landasan Teori Independent Samples T-Test
+## 2. Landasan Teori Paired Samples T-Test
 
-*Independent Samples T-Test* (Uji T Sampel Bebas/Tidak Berpasangan) adalah analisis statistik parametrik yang digunakan untuk membandingkan rata-rata (*mean*) dari dua kelompok yang **berbeda dan tidak saling berhubungan**. Uji ini dipilih — bukan *Paired Samples T-Test* — karena setiap run pengujian pada MySQL dan run pengujian pada PostgreSQL berasal dari sesi eksekusi yang terpisah (dua kelompok data independen), bukan dua pengukuran berulang pada satu subjek yang sama.
+*Paired Samples T-Test* (Uji T Sampel Berpasangan) adalah analisis statistik parametrik yang digunakan untuk membandingkan rata-rata (*mean*) dari **dua pengukuran yang berasal dari subjek/unit percobaan yang sama** pada dua kondisi berbeda. Uji ini dipilih — bukan *Independent Samples T-Test* — karena setiap run replikasi ke-i menghasilkan sepasang pengukuran yang saling berhubungan: nilai Insert Latency (dan Beban Server) MySQL serta nilai Insert Latency (dan Beban Server) PostgreSQL yang diambil pada kondisi pengujian yang identik (stream data sensor MAX30102 yang sama, urutan replikasi yang sama, dan lingkungan eksekusi yang sama). Karena kedua nilai dalam satu pasangan dipengaruhi oleh kondisi run yang sama, keduanya tidak independen satu sama lain, sehingga variabilitas antar-kondisi run perlu dikendalikan dengan menganalisis *selisih (difference score)* dari tiap pasangan, bukan membandingkan dua kelompok terpisah.
 
-Dalam eksperimen ini, uji dilakukan untuk membandingkan rata-rata **Insert Latency MySQL** dengan rata-rata **Insert Latency PostgreSQL** (begitu pula untuk metrik Beban Server), masing-masing dari $n = 35$ run replikasi sesuai batasan masalah pada proposal.
+Dalam eksperimen ini, uji dilakukan untuk membandingkan rata-rata **Insert Latency MySQL** dengan rata-rata **Insert Latency PostgreSQL** (begitu pula untuk metrik Beban Server), dengan **n = 35 pasangan run replikasi** sesuai batasan masalah pada proposal (setiap run menghasilkan satu pasang pengamatan MySQL–PostgreSQL).
 
-### Model Matematika & Rumus Uji T Sampel Bebas
+### Model Matematika & Rumus Uji T Sampel Berpasangan
 
-Sebelum uji-t dijalankan, kesetaraan varians kedua kelompok diperiksa terlebih dahulu menggunakan **Levene's Test**, untuk menentukan rumus mana yang dipakai:
+Dasar dari uji ini adalah menghitung selisih tiap pasangan pengamatan, kemudian menguji apakah rata-rata selisih tersebut berbeda signifikan dari nol:
 
-**a. Jika varians kedua kelompok setara (*equal variance assumed*):**
+```
+dᵢ = X1ᵢ − X2ᵢ        (selisih tiap pasangan run ke-i, i = 1, 2, ..., n)
 
-$$t = \frac{\bar{X}_1 - \bar{X}_2}{S_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}, \quad S_p = \sqrt{\frac{(n_1-1)S_1^2 + (n_2-1)S_2^2}{n_1+n_2-2}}$$
-
-**b. Jika varians kedua kelompok tidak setara (*equal variance not assumed* / Welch's t-test):**
-
-$$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{S_1^2}{n_1} + \frac{S_2^2}{n_2}}}$$
+t = d̄ / (Sd / √n)     df = n − 1
+```
 
 **Keterangan:**
-* $\bar{X}_1, \bar{X}_2$: Rata-rata Insert Latency (atau Beban Server) MySQL dan PostgreSQL
-* $S_1^2, S_2^2$: Varians masing-masing kelompok
-* $n_1, n_2$: Jumlah sampel/run tiap kelompok ($n_1 = n_2 = 35$)
-* $S_p$: Varians gabungan (*pooled variance*), dipakai jika varians setara
-* $\text{df}$ (*Degree of Freedom*): $n_1 + n_2 - 2$ (equal variance) atau dihitung via Welch–Satterthwaite (unequal variance)
+* **d̄** : Rata-rata selisih (*mean of differences*) Insert Latency atau Beban Server antara MySQL dan PostgreSQL untuk seluruh pasangan run
+* **Sd** : Standar deviasi dari selisih dᵢ
+* **n** : Jumlah pasangan run replikasi (n = 35)
+* **df** (*Degree of Freedom*) : n − 1 = 34
+
+Berbeda dengan Independent Samples T-Test, pada Paired Samples T-Test **tidak diperlukan uji Levene's Test** (uji homogenitas varians dua kelompok terpisah), karena yang dianalisis adalah satu variabel baru berupa selisih (d) dari pasangan-pasangan pengamatan, bukan dua kelompok independen yang variansnya perlu dibandingkan.
 
 ---
 
 ## 3. Perumusan Hipotesis Penelitian
 
-Pengujian hipotesis dilakukan untuk mengetahui secara valid apakah terdapat perbedaan performa yang signifikan antara MySQL dan PostgreSQL saat menangani aliran data sensor MAX30102 berfrekuensi tinggi:
+Pengujian hipotesis dilakukan untuk mengetahui secara valid apakah terdapat perbedaan performa yang signifikan antara MySQL dan PostgreSQL saat menangani aliran data sensor MAX30102 berfrekuensi tinggi, dengan **μd** melambangkan rata-rata selisih populasi (Insert Latency atau Beban Server) antara MySQL dan PostgreSQL:
 
-* **$H_0$ (Hipotesis Nol):** Tidak terdapat perbedaan rata-rata *insert latency* dan beban server yang signifikan antara MySQL dan PostgreSQL ($\mu_1 = \mu_2$).
-* **$H_1$ (Hipotesis Alternatif):** Terdapat perbedaan rata-rata *insert latency* dan beban server yang signifikan antara MySQL dan PostgreSQL ($\mu_1 \neq \mu_2$), dengan selisih rata-rata minimal 10%.
+* **H0 (Hipotesis Nol):** Tidak terdapat perbedaan rata-rata *insert latency* dan beban server yang signifikan antara MySQL dan PostgreSQL pada kondisi run yang sama (μd = 0).
+* **H1 (Hipotesis Alternatif):** Terdapat perbedaan rata-rata *insert latency* dan beban server yang signifikan antara MySQL dan PostgreSQL pada kondisi run yang sama (μd ≠ 0), dengan selisih rata-rata minimal 10%.
 
 ---
 
 ## 4. Kriteria Pengambilan Keputusan (Signifikansi)
 
-Analisis data dilakukan dengan menggunakan alat bantu **IBM SPSS Statistics**. Sebelum diolah, data mentah perlu melalui *preprocessing* (pembersihan karakter satuan seperti "ms"/"%" pada kolom metrik) karena SPSS mewajibkan format numerik murni untuk menjalankan Uji T-Test (lihat WS-13). Pengambilan keputusan untuk menolak atau menerima $H_0$ didasarkan pada nilai signifikansi p-value (*Sig. 2-tailed*) pada output *Independent Samples Test*, dengan ketentuan:
+Analisis data dilakukan dengan menggunakan alat bantu **IBM SPSS Statistics**. Sebelum diolah, data mentah perlu melalui *preprocessing* (pembersihan karakter satuan seperti "ms"/"%" pada kolom metrik) karena SPSS mewajibkan format numerik murni untuk menjalankan Uji T-Test (lihat WS-13). Pengambilan keputusan untuk menolak atau menerima H0 didasarkan pada nilai signifikansi p-value (*Sig. 2-tailed*) pada output *Paired Samples Test*, dengan ketentuan:
 
-> * Jika nilai $\text{Sig. (2-tailed)} < 0.05$ **dan** selisih rata-rata ≥ 10%, maka **$H_0$ Ditolak** dan **$H_1$ Diterima**. (Perbedaan performa bersifat signifikan secara statistik dan bermakna secara praktis).
-> * Jika nilai $\text{Sig. (2-tailed)} \ge 0.05$, maka **$H_0$ Diterima** dan **$H_1$ Ditolak**. (Perbedaan performa hanya terjadi karena faktor kebetulan/variasi acak, bukan karena arsitektur database).
+> * Jika nilai Sig. (2-tailed) < 0.05 **dan** selisih rata-rata ≥ 10%, maka **H0 Ditolak** dan **H1 Diterima**. (Perbedaan performa bersifat signifikan secara statistik dan bermakna secara praktis).
+> * Jika nilai Sig. (2-tailed) ≥ 0.05, maka **H0 Diterima** dan **H1 Ditolak**. (Perbedaan performa hanya terjadi karena faktor kebetulan/variasi acak, bukan karena arsitektur database).
 
-**Effect Size (Cohen's d):** Selain p-value, dilaporkan juga *effect size* Cohen's d untuk mengukur seberapa besar (bukan cuma "signifikan atau tidak") perbedaan performa kedua database — penting karena signifikansi statistik saja tidak selalu berarti signifikansi praktis (lihat WS-14).
+**Effect Size (Cohen's d untuk sampel berpasangan):** Selain p-value, dilaporkan juga *effect size* Cohen's d untuk mengukur seberapa besar (bukan cuma "signifikan atau tidak") perbedaan performa kedua database — penting karena signifikansi statistik saja tidak selalu berarti signifikansi praktis (lihat WS-14). Untuk desain berpasangan, effect size dihitung dari rata-rata dan standar deviasi selisih:
+
+```
+d = d̄ / Sd
+```
 
 | Nilai d | Interpretasi |
 |---|---|
@@ -74,9 +77,9 @@ Analisis data dilakukan dengan menggunakan alat bantu **IBM SPSS Statistics**. S
 | > 1.2 | Huge effect |
 
 **Langkah pemeriksaan sebelum uji-t (asumsi):**
-1. **Uji Normalitas** (mis. Shapiro-Wilk) — memastikan data insert latency & beban server tiap kelompok berdistribusi normal.
-2. **Uji Homogenitas Varians** (Levene's Test) — menentukan rumus t-test yang dipakai (pooled vs Welch).
-3. Jika asumsi normalitas tidak terpenuhi, gunakan uji non-parametrik alternatif (**Mann-Whitney U Test**) sebagai cadangan.
+1. **Uji Normalitas pada selisih (*difference score*)** (mis. Shapiro-Wilk) — memastikan selisih dᵢ (bukan data mentah tiap kelompok) berdistribusi normal, karena syarat normalitas pada uji-t berpasangan berlaku untuk variabel selisih, bukan untuk MySQL dan PostgreSQL secara terpisah.
+2. **Uji Homogenitas Varians (Levene's Test) tidak diperlukan** pada desain berpasangan, karena analisis dilakukan terhadap satu variabel selisih, bukan dua kelompok independen.
+3. Jika asumsi normalitas pada selisih tidak terpenuhi, gunakan uji non-parametrik alternatif (**Wilcoxon Signed Rank Test**) sebagai cadangan.
 
 ---
 
