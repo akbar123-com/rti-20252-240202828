@@ -1,4 +1,4 @@
-# Data Dictionary — `data_RTI_mysql_postgresql`
+# Data Dictionary 
 
 Deskripsi kolom pada dataset mentah hasil pengujian MySQL vs PostgreSQL (35 pasangan run/subjek).
 

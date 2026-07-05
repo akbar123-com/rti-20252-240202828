@@ -24,5 +24,5 @@ Ringkasan hasil validasi data mentah sebelum digunakan untuk analisis statistik.
 - **Completeness:** 99.89% data sensor mentah terkumpul → 35 pasangan run tetap lengkap untuk dianalisis
 - **Format:** Konsisten (numerik murni setelah preprocessing WS-13, tanpa satuan "ms"/"%" tersisa di sel)
 - **Range check:** Nilai metrik latensi & RAM berada dalam rentang wajar; anomali loss pada 1 run terdokumentasi
-- **Logic check:** Parameter pengujian sesuai desain (beban ±10.000 baris/subjek, kondisi identik antar pasangan)
+- **Logic check:** Parameter pengujian sesuai desain (beban ±1000 baris/subjek, kondisi identik antar pasangan)
 - **Status akhir:** ✅ Data siap dianalisis (Paired Samples T-Test / Wilcoxon Signed Rank Test)
