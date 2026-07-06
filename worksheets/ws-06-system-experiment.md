@@ -136,7 +136,7 @@ Evaluasi desain sistem terhadap 4 prinsip.
 > Tantangan terbesarnya adalah menjaga kondisi jaringan Wi-Fi agar tidak mendadak delay atau mencegah komputer melakukan tugas latar belakang yang memakan CPU (seperti update Windows atau proses Antivirus) saat pengujian sedang berlangsung.
 
 **Strategi:**
-> memakai jaringan Wi-Fi yang tidak ada internetnya atau paket internetnya dimatikan agar pengiriman data dari ESP32 lancar tanpa gangguan. kemudian mematikan semua aplikasi lain di laptop, agar saat CPU-nya berat  itu berarti  karena proses database tersebut, bukan karena program lain pada laptop.
+> memakai jaringan Wi-Fi yang sama internetnya atau paket internetnya diberi kecepatan yang sama agar pengiriman data dari ESP32 lancar tanpa gangguan. kemudian mematikan semua aplikasi lain di laptop, agar saat CPU-nya berat  itu berarti  karena proses database tersebut, bukan karena program lain pada laptop.
 
 
 

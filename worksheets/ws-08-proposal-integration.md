@@ -115,7 +115,7 @@ Kumpulkan hasil dari WS-02 sampai WS-07 menjadi satu ringkasan proposal.
 | Hipotesis | WS-04 | Terdapat perbedaan performa yang nyata, di mana PostgreSQL diprediksi memiliki waktu simpan yang lebih cepat dan beban server yang lebih efisien (minimal unggul 10%) dibandingkan MySQL saat menampung aliran data sensor secara real-time. |
 | Variabel & Metrik | WS-05 | Variabel bebas (IV) adalah jenis database yang digunakan (MySQL lawan PostgreSQL). Variabel terikatnya (DV) adalah efisiensi kerja server yang diukur menggunakan metrik kecepatan waktu simpan dalam milidetik (ms) dan persentase (%) pemakaian CPU/RAM server. |
 | Sistem | WS-06 | Sistem yang digunakan adalah arsitektur IoT medis yang memisahkan alat pengirim data (sensor MAX30102 dan ESP32) dengan komputer server lokal tempat database engine berjalan. |
-| Desain Eksperimen | WS-07 | Eksperimen komparatif ini dilakukan di jaringan Wi-Fi lokal tanpa internet, dengan cara menembakkan 10.000 data ke MySQL terlebih dahulu, lalu server dibersihkan (restart). Setelah itu, langkah dan beban data yang sama persis diulang untuk menguji PostgreSQL agar perbandingannya adil.|
+| Desain Eksperimen | WS-07 | Eksperimen komparatif ini dilakukan di jaringan Wi-Fi lokal dengan internet yang stabil, dengan cara menembakkan 1000 data ke MySQL terlebih dahulu pada satu semple, lalu server dibersihkan (restart). Setelah itu, langkah dan beban data yang sama persis diulang untuk menguji PostgreSQL agar perbandingannya adil.|
 
 ---
 
@@ -130,7 +130,7 @@ Verifikasi 6 koneksi kritis. Isi dengan merujuk tabel di Latihan 1.
 | RQ → Hypothesis | ✅ | Hipotesis (H1) secara spesifik menjawab RQ dengan memprediksi PostgreSQL akan lebih unggul (waktu simpan lebih cepat dan RAM/CPU lebih efisien minimal 10%).|
 | Hypothesis → Metric | ✅ | Kecepatan dikonversi menjadi metrik konkret berupa insert latency dalam satuan milidetik (ms), dan efisiensi diukur dari persentase (%) pemakaian RAM dan CPU server.|
 | Metric → System | ✅| Sistem dibuat modular (ESP32 sebagai pengirim, laptop sebagai server), sehingga skrip backend bisa presisi mencatat log milidetik, dan Task Manager komputer bisa memantau tarikan % CPU/RAM dengan akurat.|
-| System → Experiment |✅ | Desain eksperimen menggunakan skenario terisolasi secara bergantian pada sistem tersebut (tembak 10.000 data ke MySQL, bersihkan/ restart server, lalu tembak 10.000 data ke PostgreSQL) untuk menjaga keadilan alat uji.|
+| System → Experiment |✅ | Desain eksperimen menggunakan skenario terisolasi secara bergantian pada sistem tersebut (tembak 1000 data ke MySQL, bersihkan/ restart server, lalu tembak 1000 data ke PostgreSQL) untuk menjaga keadilan alat uji.|
 
 **Koneksi mana yang paling lemah?** rQ-> hipotesis karena  dalam pengujian mungkin meenyatakan 10 % lebih baik itu sulit karena mungkin selisih waktu yang akan dihasilkan akan sangat kecil satuan milidetik dan ada faktor faktor yang mungkin terjadi misal sensor yang tidak berfungsi, jari yang tidak menempel dan lainnya.
 **Bagaimana cara memperkuatnya?**
@@ -150,7 +150,7 @@ Evaluasi proposal mini menggunakan rubrik.
 | Koherensi | 3 |  Rantai logikanya sangat nyambung dari masalah awal (bottleneck akibat data berfrekuensi tinggi) , gap penelitian yang menyatakan belum ada uji pakai aliran data real-time , sampai ke desain eksperimen yang pas untuk menjawab hal tersebut.|
 | Specificity | 3 | Metrik yang digunakan sudah sangat spesifik dan terdefinisi numerik, yaitu insert latency dalam satuan milidetik (ms) serta persentase (%) penggunaan RAM dan CPU server.|
 | Feasibility | 3 | Eksperimen sangat masuk akal dan mudah dijalankan karena hanya menggunakan alat yang sudah ada (laptop server, mikrokontroler ESP32, sensor MAX30102) dan diuji di lingkungan Wi-Fi lokal tanpa butuh biaya server cloud mahal.|
-| Rigor | 3 | Pengujiannya dirancang sangat adil dan ketat, contohnya dengan kewajiban membersihkan cache dan me-restart server sebelum mengganti pengujian dari MySQL ke PostgreSQL , serta mengisolasi jaringan agar hasilnya murni.|
+| Rigor | 3 | Pengujiannya dirancang sangat adil dan ketat, contohnya dengan kewajiban membersihkan cache dan me-restart server sebelum mengganti pengujian dari MySQL ke PostgreSQL , serta menjaga atau memberikan jaringan yang stail jaringan agar hasilnya berjalan dengan lancar.|
 
 **Skor total:** 12/ 12
 

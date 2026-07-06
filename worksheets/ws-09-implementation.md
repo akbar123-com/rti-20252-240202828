@@ -109,8 +109,8 @@ Dokumentasikan environment untuk eksperimen Anda (boleh environment saat ini ata
 
 | Komponen | Spesifikasi |
 |----------|------------|
-| CPU | Intel Core i5 (atau setara), Minimal 4 Core |
-| RAM |  8 GB atau 16 GB DDR4|
+| CPU | Intel Core i3 (Gen 12/13), Minimal 4 Core |
+| RAM |  8 GB atau 16 GB DDR5|
 | GPU | CPU-only (Tidak pakai GPU karena pengujian murni fokus pada tarikan RAM dan prosesor database)|
 | OS |  Windows 10 / Windows 11 (Untuk memantau beban menggunakan Task Manager)|
 | Runtime | PHP 8.x (Untuk menjalankan skrip penangkap data / data ingestion)|

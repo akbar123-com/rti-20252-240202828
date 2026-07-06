@@ -112,7 +112,7 @@ Susun desain eksperimen berdasarkan RQ, variabel, dan sistem dari WS-04 sampai W
 | Kondisi | Deskripsi | IV Value | CV Settings |
 |---------|-----------|----------|-------------|
 | Control | Pengujian performa database baseline (standar bawaan) | Menggunakan Engine MySQL | Jaringan WiFi lokal yang tidak ada akses internet, mengirim 10.000 data dari memori array ESP32, dikunci dengan 100 data/detik untuk spam datanya dari esp 32 itu. |
-| Treatment | Pengujian performa database pembanding | Menggunakan Engine PostgreSQL | Jaringan WiFi lokal yang tidak ada akses internet, mengirim 10.000 data dari memori array ESP32, dikunci dengan 100 data/detik untuk spam datanya dari esp 32 itu. |
+| Treatment | Pengujian performa database pembanding | Menggunakan Engine PostgreSQL | Jaringan WiFi lokal yang tidak ada akses internet, mengirim 1000 data dari memori array ESP32, dikunci dengan 100 data/detik untuk spam datanya dari esp 32 itu. |
 
 ---
 
@@ -139,7 +139,7 @@ Identifikasi ancaman validitas untuk desain eksperimen ini.
 
 | Threat Type | Ancaman Spesifik | Mitigasi |
 |-------------|-----------------|----------|
-| Internal | Terjadi laptop kepanasan atau Antivirus/Update mendadak jalan saat salah satu database sedang diuji, sehingga CPU menjadi lebih pelan atau lambat. | Mematikan koneksi internet agar tidak ada update sistem yang tiba tiba berjalan, menutup semua aplikasi di latar belakang, dan memberikan jeda istirahat  pada laptop  (pendinginan)  di antara  pengujian MySQL dan PostgreSQL. |
+| Internal | Terjadi laptop kepanasan atau Antivirus/Update mendadak jalan saat salah satu database sedang diuji, sehingga CPU menjadi lebih pelan atau lambat. | Menjaga koneksi koneksi internet agar tetap stabil , menutup semua aplikasi di latar belakang, dan memberikan jeda istirahat  pada laptop  (pendinginan)  di antara  pengujian MySQL dan PostgreSQL. |
 | External | Hasil performa kecepatan database ini mungkin  tidak berlaku jika diterapkan pada server cloud sungguhan (seperti AWS/VPS) yang arsitektur hardwarenya berbeda dari laptop lokal pengujian.| Menyatakan dengan tegas di bagian Batasan Masalah pada Bab 1 bahwa kesimpulan eksperimen ini spesifik berlaku untuk skala server lokal (laptop) dan jaringan LAN.|
 | Construct | Salah mengukur waktu. Waktu kirim sinyal WiFi dari ESP32 ke leptop ikut terhitung dalam insert latency, padahal hanya ingin mengukur kecepatan mesin databasenya saja.| Membuat kode penghitung waktu (start) yaitu tepat saat perintah simpan ke database mulai dijalankan. Tujuannya agar waktu delay dari jaringan WiFi tidak ikut terhitung, sehingga waktu yang tercatat benar benar kecepatan kerja mesin database saja|
 | Conclusion | Durasi pengiriman data terlalu sebentar (misal hanya 1 menit), sehingga selisih waktu antara MySQL dan PostgreSQL yang diperoleh bisa jadi hanya faktor kebetulan.| Menembakkan data dalam jumlah yang sangat masif, misalnya 50.000 baris data secara terus menerus . Dengan jumlah data yang besar ini, hasil selisih waktu antara MySQL dan PostgreSQL bisa diukur keakuratannya menggunakan uji statistik (Independent Sample T-Test) untuk membuktikan bahwa perbedaan yang muncul memang nyata, bukan sekadar kebetulan saja.|
