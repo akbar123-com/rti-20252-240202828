@@ -153,7 +153,7 @@ Lengkapi rantai dari RQ hingga metode analisis.
 | Variable (DV) | Kecepatan waktu simpan data (insert time) dan beban kerja server saat menangani aliran data. |
 | Metric | Satuan waktu dalam milidetik (ms) untuk menghitung seberapa cepat tiap baris data tersimpan, dan persentase (%) untuk melihat seberapa besar pemakaian RAM dan CPU di server.|
 | Data source | Catatan log atau rekaman sistem hasil simulasi penyimpanan data secara langsung (streaming) menggunakan sensor detak jantung MAX30102 dan alat ESP32 ke dalam masing masing database|
-| Analysis method | Uji perbandingan rata rata (menggunakan Independent Sample T Test) untuk melihat mana yang lebih cepat dan ringan secara statistik.|
+| Analysis method | Uji perbandingan rata rata dengan(Paired-Samples T Test) untuk melihat mana yang lebih cepat dan ringan secara statistik.|
 
 **Apakah rantai lengkap?** [x] Ya / [ ] Tidak
 > Jika tidak, tahap mana yang perlu direvisi? ______________
