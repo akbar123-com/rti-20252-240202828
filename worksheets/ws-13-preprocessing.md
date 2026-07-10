@@ -103,9 +103,9 @@ Periksa dataset Anda (atau dataset contoh) dan dokumentasikan masalah yang ditem
 
 | Masalah | Jumlah Kasus | Penanganan | Justifikasi |
 |---------|-------------|------------|-------------|
-| Terdapat string teks ("ms" dan "%") pada kolom metrik numerik. | 70 dari 70 baris (100%) | String removal (Penghapusan karakter teks) | Perangkat lunak SPSS mewajibkan format Numeric murni untuk uji T-Test. |
+| Terdapat string teks ("ms" dan "%") pada kolom metrik numerik. | 70 dari 70 baris (100%) | String removal (Penghapusan karakter teks) | Baik SPSS maupun aplikasi web analisis custom (yang menjalankan Paired-Samples T-Test) mewajibkan format Numeric murni; kolom bertipe string tidak bisa diproses uji statistik. |
 | Format pemisah desimal bawaan sistem (titik .) tidak terbaca. | 70 dari 70 baris (100%) | Find and Replace (Mengubah . menjadi ,) | Menyesuaikan regional settings OS agar tidak terjadi error "no valid cases". |
-| Nilai Outlier pada metrik Data Hilang MySQL (Run 4 = 15 baris).|1 dari 70 baris (1.4%) | Retain (Dipertahankan / Tidak dihapus) | Merupakan true anomaly (bukti batas toleransi bottleneck server), bukan error sensor.|
+| Nilai Outlier pada metrik Data Hilang MySQL (Run 6 / FAREL = 15 baris).|1 dari 70 baris (1.4%) | Retain (Dipertahankan / Tidak dihapus) | Merupakan true anomaly (bukti batas toleransi bottleneck server), bukan error sensor.|
 
 
 **Jumlah data sebelum cleaning:** 70 baris (gabungan 35 run MySQL dan 35 run PostgreSQL).

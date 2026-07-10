@@ -117,10 +117,10 @@ Tentukan uji statistik yang tepat untuk eksperimen Anda.
 | Pertanyaan | Jawaban |
 |-----------|---------|
 | Berapa grup yang dibandingkan? | 2 (MySQL dan PostgreSQL)|
-| Apakah data berpasangan (paired)? |Tidak (Independen). Pengujian dilakukan secara terpisah pada dua sistem yang berbeda, bukan menguji satu database yang sama sebelum dan sesudah perlakuan.|
-| Apakah distribusi normal? (uji normalitas) | Ya. (Berdasarkan jumlah sampel N=35 di tiap grup, data dapat diasumsikan berdistribusi normal merujuk pada Central Limit Theorem). |
-| **Uji yang dipilih:** | Independent Samples T-Test|
-| **Justifikasi:** | Merupakan metode paling tepat untuk membandingkan perbedaan rata-rata (mean) antara dua kelompok data berskala rasio/numerik (seperti waktu simpan dan RAM) yang saling bebas (tidak berpasangan). |
+| Apakah data berpasangan (paired)? | Ya (Berpasangan). Setiap baris data merepresentasikan satu run/percobaan yang sama, di mana MySQL dan PostgreSQL diukur pada kondisi sensor & waktu yang identik dalam satu siklus pengujian — bukan dua sampel acak yang independen. |
+| Apakah distribusi normal? (uji normalitas) | Bervariasi per metrik, diuji pada variabel **selisih** (bukan data mentah), karena syarat paired test ada di distribusi selisihnya. Latency: Ya, normal (Shapiro-Wilk selisih, W=0,948; p=0,098 > 0,05). RAM: Tidak normal (Shapiro-Wilk selisih, W=0,871; p<0,001). |
+| **Uji yang dipilih:** | Paired Samples T-Test (untuk Latency) & Wilcoxon Signed-Rank Test (untuk RAM) |
+| **Justifikasi:** | Karena data berpasangan (paired), uji yang tepat bukan Independent T-Test melainkan uji berpasangan. Untuk Latency, selisih antar-pasangan terdistribusi normal sehingga Paired Samples T-Test dipakai. Untuk RAM, selisihnya tidak normal sehingga alternatif non-parametrik Wilcoxon Signed-Rank Test yang dipakai agar tidak melanggar asumsi. |
 
 **Effect size yang akan dilaporkan:** [x] Cohen's d / [ ] Eta-squared / [ ] Lainnya: ____
 
@@ -136,13 +136,13 @@ Gunakan data berikut (atau data riil Anda) untuk berlatih interpretasi.
 | MySQL | 2.12 ± 0.36 ms | 35 |
 | PostgreSQL | 4.46 ± 0.55 ms | 35 |
 
-p < 0.001, Cohen's d = 5.08, CI 95% = [2.11, 2.56]
+p < 0.001, Cohen's d = -4.01 (magnitude 4.01), CI 95% = [2.13, 2.53] ms (selisih rata-rata PostgreSQL lebih lambat dari MySQL)
 
 | Aspek | Interpretasi |
 |-------|-------------|
-| Signifikansi statistik | p < 0.001 signifikan pada a = 0.05 Terdapat perbedaan kecepatan waktu simpan (latency) yang sangat meyakinkan secara statistik antara MySQL dan PostgreSQL. |
-| Effect size | d= 5.08 Huge effect (Efek sangat besar). Perbedaan performa kedua database sangat mencolok dan absolut, bukan diakibatkan oleh variasi acak atau kebetulan. |
-| Practical significance | Berdampak kritis di dunia nyata. Selisih keterlambatan PostgreSQL yang mencapai sekitar 2,34 ms per baris data mungkin terlihat sepele. Namun, jika dihadapkan pada aliran data sensor detak jantung frekuensi tinggi secara terus-menerus, delay ini akan menumpuk dan menyebabkan bottleneck sistem.|
+| Signifikansi statistik | p < 0.001 signifikan pada a = 0.05 Terdapat perbedaan kecepatan waktu simpan (latency) yang sangat meyakinkan secara statistik antara MySQL dan PostgreSQL (Paired Samples T-Test, t(34) = -23,75). |
+| Effect size | d = -4,01 (magnitude 4,01) → Huge effect (Efek sangat besar, jauh di atas ambang 0,8). Perbedaan performa kedua database sangat mencolok dan absolut, bukan diakibatkan oleh variasi acak atau kebetulan. |
+| Practical significance | Berdampak kritis di dunia nyata. Selisih keterlambatan PostgreSQL yang mencapai sekitar 2,33 ms per baris data (CI 95%: 2,13–2,53 ms) mungkin terlihat sepele. Namun, jika dihadapkan pada aliran data sensor detak jantung frekuensi tinggi secara terus-menerus, delay ini akan menumpuk dan menyebabkan bottleneck sistem.|
 | Hubungan ke RQ | Menjawab Rumusan Masalah. Pengujian membuktikan secara empiris bahwa MySQL jauh lebih ringan dan optimal untuk menangani operasi insert data sensor real-time berkecepatan tinggi dibandingkan PostgreSQL. |
 | Perbandingan literatur | Sejalan dengan literatur. Hasil ini menguatkan teori bahwa database relasional yang berfokus pada kecepatan baca-tulis sederhana (seperti MySQL) lebih tangguh untuk sistem IoT, dibandingkan database berskala enterprise (PostgreSQL) yang memakan waktu lebih lama karena proses validasi data yang ketat. |
 

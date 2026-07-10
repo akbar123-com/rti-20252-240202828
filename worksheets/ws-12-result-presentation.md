@@ -114,7 +114,7 @@ Rencanakan 2-3 grafik untuk menyajikan data dari Latihan 1. Setiap grafik = satu
 |---|-------------|-------|---------------------|
 | 1 | Bar chart + error bar | Perbandingan rata-rata kecepatan waktu simpan (latency) antara MySQL dan PostgreSQL. | Rata-rata Latency (mean ± std) dari Latihan 1. |
 | 2 | Box plot | Distribusi stabilitas waktu simpan dan deteksi anomali/kemacetan data pada masing-masing database. | Seluruh 35 run data Latency MySQL dan PostgreSQL. |
-| 3 | Scatter plot | Trade-off (hubungan tarik-ulur) antara Kecepatan (Latency) vs Beban Server (RAM Puncak). | Seluruh run Latency vs RAM dari kedua database. |
+| 3 | Scatter plot | Cek asumsi trade-off Kecepatan (Latency) vs Beban Server (RAM Puncak) — hasil uji statistik menunjukkan Latency berbeda signifikan (p < 0,001) namun RAM **tidak** berbeda signifikan (p = 0,346), sehingga trade-off tersebut tidak terbukti. | Seluruh run Latency vs RAM dari kedua database. |
 
 ---
 
@@ -132,8 +132,8 @@ Evaluasi visualisasi berikut untuk bias (skenario dari contoh):
 | Apa solusinya? | Ubah titik awal sumbu Y (Y-axis) agar dimulai dari 0%, bukan 90%. Kemudian, tambahkan error bar pada puncak batang grafik untuk menunjukkan rentang standar deviasi secara jujur. |
 
 **Evaluasi grafik Anda sendiri dari Latihan 2:**
-- [v] Semua bias check lulus
-- [ ] Ada yang perlu diperbaiki: ____
+- [ ] Semua bias check lulus
+- [v] Ada yang perlu diperbaiki: Pesan grafik #3 (scatter plot) awalnya menyebut "trade-off" antara Latency dan RAM. Berdasarkan hasil Paired Samples T-Test terbaru, Latency memang berbeda signifikan antara MySQL vs PostgreSQL (Sig. 2-tailed = 0,000; Cohen's d = -4,01), tetapi RAM **tidak** berbeda signifikan (Wilcoxon, Asymp. Sig. 2-tailed = 0,368; H0 diterima). Jadi klaim "trade-off" berpotensi menyesatkan (cherry-picked interpretation) karena hanya satu sisi yang benar-benar terbukti secara statistik — pesan grafik perlu direvisi agar tidak mengimplikasikan hubungan tarik-ulur yang belum terbukti.
 
 ---
 

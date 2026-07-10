@@ -175,14 +175,14 @@ Tulis README minimum untuk eksperimen Anda (6 komponen wajib).
 ## 3. Data
 - Sumber: Perangkat keras sensor fisik MAX30102 via mikrokontroler ESP32 (Continuous streaming / dikirim beruntun secara real-time).
 - Format: Angka detak jantung (BPM) dan Timestamp milidetik.
-- Ukuran: Target 10.000 baris rekaman data untuk setiap sesi pengujian database.
+- Ukuran: Target 1000 baris rekaman data untuk setiap sesi pengujian database.
 
 ## 4. Execution
 1. Pastikan laptop terhubung ke jaringan Wi-Fi lokal yang sama dengan ESP32 (tanpa internet).
 2. Nyalakan service MySQL di XAMPP (pastikan PostgreSQL mati).
 3. Jalankan skrip backend PHP di browser, lalu nyalakan alat ESP32 untuk mulai menembakkan data.
 4. Pantau persentase RAM/CPU melalui Task Manager.
-5. Setelah 10.000 data masuk, catat hasil milidetik rata-ratanya, matikan MySQL, bersihkan cache, nyalakan PostgreSQL, lalu ulangi langkah 3 dan 4.
+5. Setelah 1000 data masuk, catat hasil milidetik rata-ratanya, matikan MySQL, bersihkan cache, nyalakan PostgreSQL, lalu ulangi langkah 3 dan 4.
 
 ## 5. Configuration
 - `koneksi.php`: File untuk mengatur switch koneksi (Host, DB Name, User, Password) ke MySQL atau PostgreSQL.
