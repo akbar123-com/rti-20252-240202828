@@ -1,99 +1,90 @@
-# Tahap 1 — Perancangan Arsitektur & Skema Database
+# Tahap 1 Perancangan Arsitektur & Skema Variabel
 
 **Status:** Selesai
 
 ---
 
-## 1. Komponen Sistem
+## 1. Komponen Eksperimen dan Pengujian
 
-1. **API Gateway (Go, Echo)** — menerima request, mem-parsing header JWT untuk mengambil `kid`, lalu meresolusi JWK terkait sebelum verifikasi signature.
-2. **Redis (L1 Cache, murni cache JWKS)**
-   - *Positive cache*: `jwks:kid:<kid>` → JWK (TTL pendek, mis. 5 menit) untuk kunci valid.
-   - *Negative cache*: `jwks:negative:<kid>` → marker (TTL pendek, mis. 60 detik) untuk `kid` yang tidak ditemukan — inti mitigasi flooding.
-   - Tidak menyimpan state rate-limit (lihat poin 3).
-3. **PostgreSQL (L2 / Source of Truth + Rate Limit Counter Permanen)** — menyimpan metadata kunci signing (`signing_keys`) dan counter rate-limit permanen (`rate_limit_counters`).
+1. **Artefak Database (MySQL vs PostgreSQL)**  dua *database engine* yang diuji sebagai Variabel Independen. MySQL merepresentasikan *engine* ringan yang dioptimalkan untuk operasi tulis sederhana, sedangkan PostgreSQL merepresentasikan *engine* dengan validasi dan kontrol konkurensi (MVCC) yang lebih ketat.
+2. **Sumber Data Fisik (ESP32 + Sensor MAX30102)** perangkat pengirim data tunggal yang membaca detak jantung secara *continuous streaming* dan mengirimkannya lewat Wi-Fi lokal, memastikan kedua database menerima karakteristik beban data yang identik.
+3. **Instrumen Pengukur Waktu (Skrip PHP Native + `microtime()`)**  mencatat waktu tepat sebelum dan sesudah operasi `INSERT` untuk menghitung *insert latency* secara presisi dalam satuan milidetik, terpisah dari proses simpan data itu sendiri agar tidak menambah *overhead* pengukuran.
+4. **Resource Monitor (Task Manager, Windows 11)** memantau persentase beban CPU dan RAM server secara manual selama pengujian berlangsung.
+5. **Pipeline Analisis (Excel, IBM SPSS Statistics, Aplikasi Web Analisis Kustom)** tempat tabulasi master data primer (`data RTI EXEL.xlsx`) untuk mengeksekusi uji parametrik/non-parametrik, dengan aplikasi web PHP kustom sebagai *cross-check* independen dari hasil SPSS.
 
-## 2. Alur Resolusi Kunci (Mitigasi)
+## 2. Alur Pelaksanaan Eksperimen (Protokol Kontrol)
 
 ```
-Request masuk → Gateway parsing header JWT → ambil `kid`
+Subjek Masuk (N=35 Orang) → Rekam Detak Jantung via MAX30102 → Simpan 1.000 Baris Data di ESP32
   │
-  ├─ Cek Redis positive cache (jwks:kid:<kid>)
-  │     ├─ HIT  → verifikasi signature → lanjut
-  │     └─ MISS ↓
+  ▼ (Setiap Subjek Diuji Berpasangan pada Kedua Database)
+Database Diaktifkan (MySQL atau PostgreSQL, database pembanding dimatikan)
   │
-  ├─ Cek Redis negative cache (jwks:negative:<kid>)
-  │     ├─ HIT  → tolak langsung (401), tanpa query DB
-  │     └─ MISS ↓
-  │
-  ├─ UPSERT & cek rate_limit_counters di PostgreSQL (atomic, per client_ip + window)
-  │     ├─ EXCEEDED → tolak (429) + set Redis negative cache
-  │     └─ OK ↓
-  │
-  └─ Query PostgreSQL (signing_keys WHERE kid = ? AND is_active)
-        ├─ FOUND     → isi Redis positive cache → verifikasi signature
-        └─ NOT FOUND → set Redis negative cache → tolak (401)
+  ├─ t-awal: skrip PHP mencatat microtime() sebelum operasi INSERT
+  │     │
+  │     ▼
+  ├─ Fase Transmisi: ESP32 menembakkan 1.000 baris data secara terus-menerus tanpa jeda
+  │     │ (Berpotensi terjadi bottleneck antrean pada web server/Apache jika beban melampaui kapasitas)
+  │     ▼
+  └─ t-akhir: skrip PHP mencatat microtime() setelah data tersimpan → hitung insert latency (ms)
+        │
+        ▼
+Task Manager mencatat %RAM selama proses berjalan → Rekap hasil ke dashboard → Pindahkan ke Excel
+
+Catatan:
+Sebelum berpindah ke database pembanding, cache dibersihkan dan seluruh proses latar belakang laptop
+(Windows Update, Antivirus) dimatikan agar beban CPU/RAM yang tercatat murni berasal dari proses
+database, bukan proses lain. Jaringan Wi-Fi yang dipakai ESP32 dan server harus sama persis.
+
+Mekanisme Validitas Data: Jika XAMPP/database tiba-tiba berhenti (crash) saat dihantam data, atau
+koneksi Wi-Fi ESP32 terputus di tengah jalan, run pengujian pada subjek tersebut dianggap gugur dan
+wajib diulang setelah sistem/koneksi pulih agar tidak merusak distribusi data.
 ```
 
-Catatan: pada mode `CACHE_MODE=none` (baseline), langkah cek Redis dan rate-limit dilewati — setiap request langsung query `signing_keys` di PostgreSQL, mensimulasikan gateway tanpa mitigasi.
+## 3. Skema Penataan Data dan Variabel (Master Spreadsheet / SPSS)
 
-Mekanisme **fail-closed**: jika Redis tidak dapat diakses, gateway tetap melanjutkan ke PostgreSQL (rate-limit counter tetap berfungsi karena bersumber dari PostgreSQL); jika PostgreSQL tidak dapat diakses, request ditolak (bukan diloloskan tanpa verifikasi).
+Berikut skema struktur penataan kolom data primer yang dirancang pada file master `data RTI EXEL.xlsx` sebelum diimpor ke variabel IBM SPSS Statistics:
 
-## 3. Skema Database (PostgreSQL)
-
-```sql
-CREATE TABLE signing_keys (
-    kid             VARCHAR(255) PRIMARY KEY,
-    kty             VARCHAR(10)  NOT NULL DEFAULT 'RSA',
-    alg             VARCHAR(10)  NOT NULL DEFAULT 'RS256',
-    use_type        VARCHAR(10)  NOT NULL DEFAULT 'sig',
-    n               TEXT         NOT NULL,   -- modulus, base64url
-    e               TEXT         NOT NULL,   -- exponent, base64url
-    is_active       BOOLEAN      NOT NULL DEFAULT TRUE,
-    created_at      TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    expires_at      TIMESTAMPTZ,
-    revoked_at      TIMESTAMPTZ
-);
-
-CREATE INDEX idx_signing_keys_active ON signing_keys (kid) WHERE is_active = TRUE;
-
--- Counter rate-limit permanen (source of truth di PostgreSQL)
-CREATE TABLE rate_limit_counters (
-    client_ip       INET        NOT NULL,
-    window_start    TIMESTAMPTZ NOT NULL,
-    request_count   INTEGER     NOT NULL DEFAULT 0,
-    blocked_count   INTEGER     NOT NULL DEFAULT 0,
-    PRIMARY KEY (client_ip, window_start)
-);
-```
-
-Upsert atomik untuk increment counter per request (window tetap, mis. 1 detik):
-
-```sql
-INSERT INTO rate_limit_counters (client_ip, window_start, request_count)
-VALUES ($1, $2, 1)
-ON CONFLICT (client_ip, window_start)
-DO UPDATE SET request_count = rate_limit_counters.request_count + 1
-RETURNING request_count;
-```
-
-Jika `request_count` melebihi ambang batas, request ditolak dan `blocked_count` di-increment pada baris yang sama. Data ini bersifat permanen (tidak di-TTL) sehingga dapat dipakai langsung untuk analisis pola serangan pada Tahap 4.
-
-Tabel log lookup tambahan (untuk cache hit/miss ratio) akan ditentukan pada Tahap 2 setelah skenario k6 lebih jelas.
-
-## 4. Skema Redis (Murni L1 Cache JWKS)
-
-| Key Pattern | Tipe | TTL | Tujuan |
+| Nama Variabel | Tipe Data | Atribut / Keterangan | Tujuan Analisis |
 |---|---|---|---|
-| `jwks:kid:<kid>` | STRING (JSON JWK) | ~300s | Cache positif untuk kunci valid |
-| `jwks:negative:<kid>` | STRING (`"1"`) | ~60s | Cache negatif untuk `kid` tak dikenal |
+| `ID_Subjek` | NUMERIC (Nominal) | Angka urut identitas subjek (1 sampai 35) | Identifikasi sampel berpasangan |
+| `MYSQL_LATENSI` / `PG_LATENSI` | NUMERIC (Scale) | Insert latency dalam satuan milidetik | Metrik utama 1 — kecepatan simpan data |
+| `MYSQL_RAM` / `PG_RAM` | NUMERIC (Scale) | Beban RAM server dalam satuan persen (%) | Metrik utama 2 — efisiensi beban server |
+| `MYSQL_DISK` / `PG_DISK` | NUMERIC (Scale) | Beban disk server dalam satuan persen (%) | Dicatat, di luar cakupan analisis batasan masalah proposal |
+| `MYSQL_LOSS` / `PG_LOSS` | NUMERIC (Scale) | Jumlah baris data hilang/gagal tersimpan | Temuan tambahan deskriptif, belum diuji signifikansinya |
 
-## 5. Keputusan Teknis (Final)
+**Skema tabel database** (identik di kedua *engine* agar hasil dapat dibandingkan langsung):
 
-1. **Mode eksperimen**: satu binary gateway dengan toggle `CACHE_MODE=none|hybrid` — `none` = baseline tanpa cache/rate-limit, `hybrid` = arsitektur mitigasi penuh. Memastikan perbandingan baseline vs mitigated apple-to-apple untuk perhitungan $D_{perf}$.
-2. **Framework Gateway**: **Echo** (Go web framework).
-3. **Rate limiting**: counter permanen di **PostgreSQL** (`rate_limit_counters`, atomic UPSERT per `client_ip` + window). **Redis murni sebagai L1 cache JWKS** (positive & negative cache), tidak menyimpan state rate-limit.
-4. **Identity Service**: **PostgreSQL `signing_keys` langsung sebagai backing store** — tidak ada microservice tambahan; fokus eksperimen pada lapisan caching/rate-limit di Gateway.
-5. **Redis client**: `go-redis/redis/v9` (default standar Go ekosistem).
-6. **PostgreSQL driver**: `pgx` (native driver, performa baik, mendukung connection pooling via `pgxpool`).
-7. **Skenario issuer**: single issuer (disederhanakan) — dapat diperluas ke multi-issuer di penelitian lanjutan jika diperlukan.
+```sql
+-- MySQL
+CREATE TABLE log_jantung (
+    id           INT AUTO_INCREMENT PRIMARY KEY,
+    nilai_sensor FLOAT    NOT NULL,
+    waktu        DATETIME NOT NULL
+);
+
+-- PostgreSQL
+CREATE TABLE log_jantung (
+    id           SERIAL PRIMARY KEY,
+    nilai_sensor REAL      NOT NULL,
+    waktu        TIMESTAMP NOT NULL
+);
+```
+
+*Insert latency* dan beban RAM sengaja tidak disimpan sebagai kolom di dalam tabel  keduanya dicatat di luar database (skrip PHP dan Task Manager) agar proses pencatatan metrik tidak ikut menambah beban *insert* yang sedang diukur.
+
+## 4. Skema Penetapan Matriks Eksperimen
+
+| Komponen Eksperimen | Tipe Variabel | Nilai / Batasan Pengukuran | Target Output |
+|---|---|---|---|
+| **Jenis Database** | Variabel Independen | Kondisi 1: MySQL 8.0<br>Kondisi 2: PostgreSQL 15.x/16.x | Menjadi stimulus perbedaan performa *insert* & beban server |
+| **Insert Latency & Beban RAM** | Variabel Dependen | Nilai riil waktu simpan (ms) dan persentase beban RAM (%) | Metrik utama efisiensi & efisiensi server |
+| **Frekuensi Data Masuk** | Variabel Kontrol | Dikunci konstan (target 1.000 baris/subjek/database) | Memastikan beban yang identik di kedua database |
+
+## 5. Keputusan Teknis dan Operasional (Final)
+
+1. **Mode Eksperimen**: Menggunakan rancangan eksperimen berpasangan (*Paired/Within-Condition Design*) pada N=35 subjek. Setiap subjek merekam data detak jantungnya sendiri lewat MAX30102, lalu stream data yang sama diujikan bergantian ke MySQL dan PostgreSQL agar perbandingan performa benar-benar *apple-to-apple*.
+2. **Standarisasi Perangkat**: Server dikunci pada satu unit  Intel Core i3 Gen 12/13, RAM 8/16 GB DDR5, Windows 11  agar tidak ada bias spesifikasi perangkat antar-sesi pengujian.
+3. **Lingkungan Pengujian**: Menggunakan jaringan Wi-Fi publik (bukan jaringan terisolasi) untuk ESP32 dan server, sehingga latensi jaringan dianggap sebagai faktor alami yang merepresentasikan kondisi implementasi IoT di dunia nyata  sesuai batasan masalah pada proposal.
+4. **Software Analisis**: Menggunakan **IBM SPSS Statistics** sebagai pipeline komputasi utama (*Analyze → Compare Means → Paired-Samples T-Test*, atau *Nonparametric Tests → Related Samples* untuk Wilcoxon), diverifikasi silang lewat aplikasi web analisis kustom berbasis PHP.
+5. **Skenario Tugas**: Skenario tunggal yang diseragamkan  "Kirimkan 1.000 baris data detak jantung secara terus-menerus (*continuous streaming*) dari ESP32 ke database yang sedang aktif diuji, catat rata-rata *insert latency* dan beban RAM." Tidak ada variasi tambahan selama satu sesi run berlangsung.
