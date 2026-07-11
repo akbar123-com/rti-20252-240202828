@@ -1,9 +1,5 @@
 <?php
-// get_metrics.php
-// Membaca beban CPU, Disk, dan RAM sistem (khusus Windows, via PowerShell &
-// wmic). Dipanggil terpisah dari insert.php (setiap 2 detik oleh JS di
-// index.php), jadi tidak memperlambat pengukuran Insert Latency.
-// Tidak ada bug ditemukan di file ini — logikanya sudah benar.
+
 
 function getSystemMetrics() {
     // 1. Membaca CPU

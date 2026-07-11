@@ -1,6 +1,6 @@
 # Landasan Teori & Metodologi Analisis Statistik Komparatif
 
-Landasan teori metrik performa dan metodologi uji statistik — hasil **Tahap 1**.
+Landasan teori metrik performa dan metodologi uji statistik  hasil **Tahap 1**.
 
 ## Isi Dokumen
 - Landasan Teori Metrik Performa Database (*Insert Latency* & Beban Server)
@@ -23,7 +23,7 @@ Kedua metrik ini bersifat *ratio scale* (memiliki nol absolut dan jarak antar ni
 
 ## 2. Landasan Teori Paired Samples T-Test
 
-*Paired Samples T-Test* (Uji T Sampel Berpasangan) adalah analisis statistik parametrik yang digunakan untuk membandingkan rata-rata (*mean*) dari **dua pengukuran yang berasal dari subjek/unit percobaan yang sama** pada dua kondisi berbeda. Uji ini dipilih — bukan *Independent Samples T-Test* — karena setiap run replikasi ke-i menghasilkan sepasang pengukuran yang saling berhubungan: nilai Insert Latency (dan Beban Server) MySQL serta nilai Insert Latency (dan Beban Server) PostgreSQL yang diambil pada kondisi pengujian yang identik (stream data sensor MAX30102 yang sama, urutan replikasi yang sama, dan lingkungan eksekusi yang sama). Karena kedua nilai dalam satu pasangan dipengaruhi oleh kondisi run yang sama, keduanya tidak independen satu sama lain, sehingga variabilitas antar-kondisi run perlu dikendalikan dengan menganalisis *selisih (difference score)* dari tiap pasangan, bukan membandingkan dua kelompok terpisah.
+*Paired Samples T-Test* (Uji T Sampel Berpasangan) adalah analisis statistik parametrik yang digunakan untuk membandingkan rata-rata (*mean*) dari **dua pengukuran yang berasal dari subjek/unit percobaan yang sama** pada dua kondisi berbeda. Uji ini dipilih bukan *Independent Samples T-Test*  karena setiap run replikasi ke-i menghasilkan sepasang pengukuran yang saling berhubungan: nilai Insert Latency (dan Beban Server) MySQL serta nilai Insert Latency (dan Beban Server) PostgreSQL yang diambil pada kondisi pengujian yang identik (stream data sensor MAX30102 yang sama, urutan replikasi yang sama, dan lingkungan eksekusi yang sama). Karena kedua nilai dalam satu pasangan dipengaruhi oleh kondisi run yang sama, keduanya tidak independen satu sama lain, sehingga variabilitas antar-kondisi run perlu dikendalikan dengan menganalisis *selisih (difference score)* dari tiap pasangan, bukan membandingkan dua kelompok terpisah.
 
 Dalam eksperimen ini, uji dilakukan untuk membandingkan rata-rata **Insert Latency MySQL** dengan rata-rata **Insert Latency PostgreSQL** (begitu pula untuk metrik Beban Server), dengan **n = 35 pasangan run replikasi** sesuai batasan masalah pada proposal (setiap run menghasilkan satu pasang pengamatan MySQL–PostgreSQL).
 
@@ -63,7 +63,7 @@ Analisis data dilakukan dengan menggunakan alat bantu **IBM SPSS Statistics**. S
 > * Jika nilai Sig. (2-tailed) < 0.05 **dan** selisih rata-rata ≥ 10%, maka **H0 Ditolak** dan **H1 Diterima**. (Perbedaan performa bersifat signifikan secara statistik dan bermakna secara praktis).
 > * Jika nilai Sig. (2-tailed) ≥ 0.05, maka **H0 Diterima** dan **H1 Ditolak**. (Perbedaan performa hanya terjadi karena faktor kebetulan/variasi acak, bukan karena arsitektur database).
 
-**Effect Size (Cohen's d untuk sampel berpasangan):** Selain p-value, dilaporkan juga *effect size* Cohen's d untuk mengukur seberapa besar (bukan cuma "signifikan atau tidak") perbedaan performa kedua database — penting karena signifikansi statistik saja tidak selalu berarti signifikansi praktis (lihat WS-14). Untuk desain berpasangan, effect size dihitung dari rata-rata dan standar deviasi selisih:
+**Effect Size (Cohen's d untuk sampel berpasangan):** Selain p-value, dilaporkan juga *effect size* Cohen's d untuk mengukur seberapa besar (bukan cuma "signifikan atau tidak") perbedaan performa kedua database penting karena signifikansi statistik saja tidak selalu berarti signifikansi praktis (lihat WS-14). Untuk desain berpasangan, effect size dihitung dari rata-rata dan standar deviasi selisih:
 
 ```
 d = d̄ / Sd

@@ -1,7 +1,5 @@
 <?php
-// insert.php
-// Endpoint yang dipanggil ESP32 (lihat esp32/sketch_jun11c_RTI.ino) untuk
-// menyimpan satu nilai sensor MAX30102 dan mengukur Insert Latency.
+
 require 'koneksi.php';
 
 if (isset($_POST['nilai_sensor'])) {
@@ -23,8 +21,7 @@ if (isset($_POST['nilai_sensor'])) {
         $insert_latency = ($end_time - $start_time) * 1000;
 
         // 5. TULIS LOG KE FILE CSV SECARA TERPISAH
-        // Nama file log otomatis mengikuti $db_engine dari koneksi.php,
-        // supaya data MySQL dan PostgreSQL tidak pernah tertukar/tercampur.
+        
         if ($db_engine == "MySQL") {
             $nama_file_log = "log_mysql.csv";
         } else {

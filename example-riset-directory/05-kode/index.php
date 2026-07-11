@@ -1,7 +1,5 @@
 <?php
-// index.php
-// Dashboard real-time untuk memantau progres pengujian MySQL vs PostgreSQL.
-// Tidak ada bug ditemukan di file ini — logikanya sudah benar.
+
 
 // FITUR HAPUS DATA OTOMATIS & TRUNCATE DATABASE (Tombol Reset)
 if (isset($_POST['reset_mysql'])) {

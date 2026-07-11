@@ -1,6 +1,6 @@
 # 03-teori
 
-Arsitektur, landasan teori, dan metodologi analisis statistik — hasil **Tahap 1**, untuk penelitian **Analisis Perbandingan Performa Database MySQL dan PostgreSQL pada Sistem Pemantauan Data Sensor Detak Jantung Frekuensi Tinggi**.
+Arsitektur, landasan teori, dan metodologi analisis statistik  hasil **Tahap 1**, untuk penelitian **Analisis Perbandingan Performa Database MySQL dan PostgreSQL pada Sistem Pemantauan Data Sensor Detak Jantung Frekuensi Tinggi**.
 
 ## Isi yang diharapkan
 
@@ -12,9 +12,9 @@ Arsitektur, landasan teori, dan metodologi analisis statistik — hasil **Tahap 
 
 ## Berkas
 
-* [`arsitektur-dan-skema.md`](arsitektur-dan-skema.md) — diagram Mermaid alur data, skema database MySQL & PostgreSQL, konfigurasi eksperimen, dan keputusan teknis.
-* [`landasan-teori-statistik.md`](landasan-teori-statistik.md) — landasan teori metrik performa, rumus Independent Samples T-Test, hipotesis, dan kriteria signifikansi.
-* [`tinjauan-pustaka.md`](tinjauan-pustaka.md) — draf Bab 2: State of the Art, Research Gap, Landasan Teori Konsep, & Definisi Operasional Variabel.
+* [`arsitektur-dan-skema.md`](arsitektur-dan-skema.md)  diagram Mermaid alur data, skema database MySQL & PostgreSQL, konfigurasi eksperimen, dan keputusan teknis.
+* [`landasan-teori-statistik.md`](landasan-teori-statistik.md)  landasan teori metrik performa, rumus Independent Samples T-Test, hipotesis, dan kriteria signifikansi.
+* [`tinjauan-pustaka.md`](tinjauan-pustaka.md)  draf Bab 2: State of the Art, Research Gap, Landasan Teori Konsep, & Definisi Operasional Variabel.
 
 ## Sumber
 

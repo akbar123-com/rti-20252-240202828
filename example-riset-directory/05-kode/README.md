@@ -1,6 +1,6 @@
 # 05-kode
 
-Source code implementasi — **Tahap 2** (Setup Sistem: ESP32 + Server) dan **Tahap 3** (Eksekusi Pengujian MySQL vs PostgreSQL).
+Source code implementasi **Tahap 2** (Setup Sistem: ESP32 + Server) dan **Tahap 3** (Eksekusi Pengujian MySQL vs PostgreSQL).
 
 ## Struktur
 
@@ -43,7 +43,7 @@ Source code implementasi — **Tahap 2** (Setup Sistem: ESP32 + Server) dan **Ta
 
 `log_mysql.csv` dan `log_postgresql.csv` akan otomatis dibuat oleh `insert.php` saat pengujian berjalan — **jangan disimpan di folder `05-kode/`**. Setelah satu sesi pengujian selesai, pindahkan/salin isinya ke `../04-data/raw/` sebagai data mentah untuk dianalisis.
 
-**Catatan:** ditemukan file `log_eksperimen.csv` (kosong) di upload kamu yang tidak direferensikan di kode manapun — kemungkinan sisa dari versi sebelumnya. Aman untuk dihapus, tidak memengaruhi jalannya sistem.
+**Catatan:** ditemukan file `log_eksperimen.csv` (kosong) di upload kamu yang tidak direferensikan di kode manapun kemungkinan sisa dari versi sebelumnya. Aman untuk dihapus, tidak memengaruhi jalannya sistem.
 
 ## Acuan
 

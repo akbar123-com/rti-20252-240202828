@@ -1,6 +1,6 @@
 # 01-proposal
 
-Dokumen proposal penelitian — versi draf maupun final.
+Dokumen proposal penelitian  versi draf maupun final.
 
 ## Isi yang diharapkan
 
@@ -9,7 +9,7 @@ Dokumen proposal penelitian — versi draf maupun final.
 
 ## Berkas
 
-- [proposal-penelitian.md](proposal-penelitian.md) — draf proposal (rekonstruksi retrospektif berdasarkan hasil Tahap 1-4)
+- [proposal-penelitian.md](proposal-penelitian.md)  draf proposal (rekonstruksi retrospektif berdasarkan hasil Tahap 1-4)
 
 ## Acuan
 

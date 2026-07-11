@@ -10,7 +10,7 @@ Riset di bidang Internet of Things (IoT) kesehatan dan performa basis data relas
 
 Di sisi lain, penelitian yang secara khusus mengevaluasi performa RDBMS justru dilakukan dengan pendekatan yang berlawanan: menggunakan dataset statis yang diimpor sekaligus. Ahsa et al. (2023) menguji responsivitas empat fungsi kueri (CRUD) pada MySQL dan PostgreSQL menggunakan data aplikasi Google Playstore hingga 250.000 baris, dan menyimpulkan PostgreSQL unggul dengan waktu respons yang konsisten di bawah 4 detik. Putra et al. (2022) memperkuat temuan ini melalui pengujian CRUD, SUM, dan COUNT pada MySQL, PostgreSQL, dan MongoDB menggunakan dataset permainan catur dari Kaggle (20.058 baris), di mana PostgreSQL kembali mencatat waktu respons tercepat (2,5 detik) dibandingkan MySQL (21,6 detik). Dachi dan Suhada (2025) menambah bukti serupa melalui simulasi data akademik mahasiswa, dan menyimpulkan PostgreSQL lebih tangguh untuk data kompleks berskala besar, sementara MySQL lebih praktis untuk kebutuhan proyek ringan.
 
-Pola yang konsisten muncul dari kelima studi di atas: riset IoT medis berhenti di titik sensor berhasil membaca dan mengirim data, sedangkan riset performa database berhenti di titik pengujian dengan data yang sudah "diam" (statis, diimpor sekaligus). Belum ada satu pun studi yang menyatukan kedua sisi ini — menguji langsung ketahanan MySQL dan PostgreSQL ketika dihadapkan pada aliran data nyata yang datang satu per satu, tanpa jeda, dari perangkat sensor fisik berfrekuensi tinggi. Penelitian ini diposisikan untuk menutup celah tersebut.
+Pola yang konsisten muncul dari kelima studi di atas: riset IoT medis berhenti di titik sensor berhasil membaca dan mengirim data, sedangkan riset performa database berhenti di titik pengujian dengan data yang sudah "diam" (statis, diimpor sekaligus). Belum ada satu pun studi yang menyatukan kedua sisi ini menguji langsung ketahanan MySQL dan PostgreSQL ketika dihadapkan pada aliran data nyata yang datang satu per satu, tanpa jeda, dari perangkat sensor fisik berfrekuensi tinggi. Penelitian ini diposisikan untuk menutup celah tersebut.
 
 ## 2. Research Gap
 
@@ -23,21 +23,21 @@ Berdasarkan pemetaan literatur pada bagian 1, teridentifikasi empat jenis celah 
 | **Data Gap** | Dataset yang dipakai riset-riset sebelumnya (Ahsa, Putra) selalu berupa file statis (CSV/Excel). Belum ada pengujian dengan data berkarakteristik *continuous streaming* / *time-series* dari sensor fisik secara real-time. |
 | **Context Gap** | Evaluasi database selama ini difokuskan pada konteks aplikasi web/desktop biasa, belum pada konteks monitoring IoT medis, di mana keterlambatan respons sekecil apa pun berisiko menghilangkan data vital pasien. |
 
-**Gap utama yang diangkat:** belum ada penelitian yang menguji batas performa waktu simpan (*insert latency*) dan stabilitas beban memori antara MySQL dan PostgreSQL ketika dihadapkan langsung pada aliran data *continuous streaming* dari sensor detak jantung MAX30102 berfrekuensi tinggi. Gap ini penting karena keandalan sistem pemantauan kesehatan bergantung pada kemampuan database menahan tekanan data yang datang terus-menerus — jika gagal, hasilnya bukan sekadar performa buruk, melainkan hilangnya rekam data medis (*data loss*) yang bisa berakibat fatal.
+**Gap utama yang diangkat:** belum ada penelitian yang menguji batas performa waktu simpan (*insert latency*) dan stabilitas beban memori antara MySQL dan PostgreSQL ketika dihadapkan langsung pada aliran data *continuous streaming* dari sensor detak jantung MAX30102 berfrekuensi tinggi. Gap ini penting karena keandalan sistem pemantauan kesehatan bergantung pada kemampuan database menahan tekanan data yang datang terus-menerus  jika gagal, hasilnya bukan sekadar performa buruk, melainkan hilangnya rekam data medis (*data loss*) yang bisa berakibat fatal.
 
 ## 3. Landasan Teori
 
 ### 3.1 Aliran Data Sensor Detak Jantung (MAX30102)
 
-MAX30102 adalah modul sensor terintegrasi berbasis prinsip *photoplethysmography* (PPG), yang mendeteksi volume aliran darah menggunakan pantulan cahaya LED merah dan inframerah pada permukaan kulit. Dalam implementasi IoT kesehatan, sensor ini digabungkan dengan mikrokontroler ESP32 yang membaca dan mengirimkan nilai PPG secara terus-menerus melalui jaringan Wi-Fi lokal. Karakteristik utama data ini adalah *time-series continuous streaming* — paket data kecil dikirim satu per satu dalam orde milidetik tanpa jeda, berbeda dari data batch yang dikirim sekaligus dalam satu waktu.
+MAX30102 adalah modul sensor terintegrasi berbasis prinsip *photoplethysmography* (PPG), yang mendeteksi volume aliran darah menggunakan pantulan cahaya LED merah dan inframerah pada permukaan kulit. Dalam implementasi IoT kesehatan, sensor ini digabungkan dengan mikrokontroler ESP32 yang membaca dan mengirimkan nilai PPG secara terus-menerus melalui jaringan Wi-Fi lokal. Karakteristik utama data ini adalah *time-series continuous streaming*  paket data kecil dikirim satu per satu dalam orde milidetik tanpa jeda, berbeda dari data batch yang dikirim sekaligus dalam satu waktu.
 
 ### 3.2 Arsitektur Sistem: Input–Process–Output
 
 Mengacu pada pemetaan konteks sistem pada tahap perumusan masalah, alur kerja sistem yang diteliti dapat digambarkan sebagai berikut:
 
-- **Input** — nilai PPG mentah dari sensor MAX30102, dikirim oleh ESP32 pada frekuensi tetap (misalnya 100 sampel per detik) melalui Wi-Fi lokal.
-- **Process** — server menerima data tersebut dan mengeksekusi perintah `INSERT` secara berurutan; MySQL dan PostgreSQL diuji secara bergantian pada kondisi jaringan dan beban yang identik.
-- **Output** — catatan waktu simpan (*insert latency*) tiap baris data, jumlah baris yang berhasil tersimpan tanpa hilang, serta rekaman pemakaian CPU/RAM server selama pengujian berlangsung.
+- **Input** nilai PPG mentah dari sensor MAX30102, dikirim oleh ESP32 pada frekuensi tetap (misalnya 100 sampel per detik) melalui Wi-Fi lokal.
+- **Process**  server menerima data tersebut dan mengeksekusi perintah `INSERT` secara berurutan; MySQL dan PostgreSQL diuji secara bergantian pada kondisi jaringan dan beban yang identik.
+- **Output**  catatan waktu simpan (*insert latency*) tiap baris data, jumlah baris yang berhasil tersimpan tanpa hilang, serta rekaman pemakaian CPU/RAM server selama pengujian berlangsung.
 
 Arsitektur ini dirancang modular: sisi pengirim (ESP32 + sensor) berdiri terpisah dari sisi penerima (database engine), sehingga jenis database (variabel independen) dapat ditukar tanpa mengubah kode di sisi perangkat keras.
 
@@ -45,8 +45,8 @@ Arsitektur ini dirancang modular: sisi pengirim (ESP32 + sensor) berdiri terpisa
 
 RDBMS menyimpan data dalam struktur tabel yang saling berelasi. Dua RDBMS yang dibandingkan dalam penelitian ini:
 
-- **MySQL** — basis data open-source yang ringan, populer, dan sering dijadikan pilihan default oleh pengembang IoT karena kemudahan setup dan performa baca/tulis yang cepat untuk beban standar.
-- **PostgreSQL** — basis data open-source tingkat lanjut yang patuh ketat terhadap standar SQL, dirancang untuk menangani kueri kompleks dan beban konkuren dengan stabilitas integritas data setingkat enterprise.
+- **MySQL** basis data open-source yang ringan, populer, dan sering dijadikan pilihan default oleh pengembang IoT karena kemudahan setup dan performa baca/tulis yang cepat untuk beban standar.
+- **PostgreSQL** basis data open-source tingkat lanjut yang patuh ketat terhadap standar SQL, dirancang untuk menangani kueri kompleks dan beban konkuren dengan stabilitas integritas data setingkat enterprise.
 
 ### 3.4 Insert Latency dan Bottleneck
 

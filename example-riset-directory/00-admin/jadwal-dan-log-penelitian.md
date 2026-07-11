@@ -20,8 +20,8 @@ Catatan kronologis pelaksanaan tiap tahap (sumber: riwayat commit git & dokumen 
 
 ## Item Tindak Lanjut (Checklist Sebelum Submission)
 
-- [x] Lengkapi matriks literatur dengan paper *related work* nyata (`02-literatur/matriks-literatur.md`) — referensi berfokus pada arsitektur database IoT medis terverifikasi.
-- [x] Verifikasi anomali 15 *data loss* pada MySQL melalui *log error* Apache/XAMPP — terkonfirmasi diakibatkan oleh *bottleneck* antrean *disk I/O* saat beban puncak sensor.
+- [x] Lengkapi matriks literatur dengan paper *related work* nyata (`02-literatur/matriks-literatur.md`)  referensi berfokus pada arsitektur database IoT medis terverifikasi.
+- [x] Verifikasi anomali 15 *data loss* pada MySQL melalui *log error* Apache/XAMPP  terkonfirmasi diakibatkan oleh *bottleneck* antrean *disk I/O* saat beban puncak sensor.
 - [ ] Tetapkan bahasa final naskah (Indonesia/Inggris) sesuai dengan panduan (*author guidelines*) jurnal tujuan.
 - [ ] Pindahkan konten `07-manuskrip/naskah-jurnal.md` / `.docx` ke template *format* jurnal tujuan (misal: template Jurnal PETIK).
 - [ ] Finalisasi penempatan visual (grafik *bar chart* latensi dan tabel *paired samples t-test*) sesuai gaya selingkung jurnal.
@@ -29,4 +29,4 @@ Catatan kronologis pelaksanaan tiap tahap (sumber: riwayat commit git & dokumen 
 
 ## Korespondensi
 
-*(belum ada — tambahkan catatan korespondensi dengan pembimbing/editor jurnal di sini saat tersedia)*
+*(belum ada  tambahkan catatan korespondensi dengan pembimbing/editor jurnal di sini saat tersedia)*

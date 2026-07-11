@@ -36,7 +36,7 @@ Secara deskriptif, MySQL rata-rata menyelesaikan operasi simpan data **2.3340 ms
 | RAM (MySQL vs PostgreSQL) | 35 | 0.440 | 0.008 |
 
 **Interpretasi:**
-Korelasi Latency antar kedua sistem lemah dan **tidak signifikan** (r=0.249, p=0.150 > 0.05) — performa latency MySQL pada suatu run tidak dapat memprediksi performa latency PostgreSQL pada run yang sama. Korelasi RAM tergolong sedang dan **signifikan** (r=0.440, p=0.008 < 0.05), menunjukkan kedua database cenderung mengalami kenaikan/penurunan beban RAM bersamaan, kemungkinan dipengaruhi kondisi resource host yang sama saat pengujian.
+Korelasi Latency antar kedua sistem lemah dan **tidak signifikan** (r=0.249, p=0.150 > 0.05) performa latency MySQL pada suatu run tidak dapat memprediksi performa latency PostgreSQL pada run yang sama. Korelasi RAM tergolong sedang dan **signifikan** (r=0.440, p=0.008 < 0.05), menunjukkan kedua database cenderung mengalami kenaikan/penurunan beban RAM bersamaan, kemungkinan dipengaruhi kondisi resource host yang sama saat pengujian.
 
 ---
 
@@ -60,7 +60,7 @@ Uji normalitas selisih (Shapiro-Wilk): W=0.871, p=0.0007 (**Tidak Normal**) → 
 |---|---|---|---|---|---|
 | Wilcoxon | 86.60 | 86.45 | 259.5 | 0.9009 | 0.367650 |
 
-*(Pembanding — Paired T-Test: Mean Selisih=0.3966, Sd Selisih=2.4530, df=34, t=0.9565, Sig.=0.345596, Cohen's d=0.1617 — tidak dipakai karena asumsi normalitas selisih dilanggar)*
+*(Pembanding Paired T-Test: Mean Selisih=0.3966, Sd Selisih=2.4530, df=34, t=0.9565, Sig.=0.345596, Cohen's d=0.1617 tidak dipakai karena asumsi normalitas selisih dilanggar)*
 
 **Keputusan:** Asymp. Sig. (2-tailed) = 0.368 > 0.05 → **H0 diterima, H1 ditolak**. Tidak terdapat perbedaan RAM Usage yang signifikan antara MySQL dan PostgreSQL.
 

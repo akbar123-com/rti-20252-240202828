@@ -1,8 +1,5 @@
 <?php
-// koneksi.php
-// TENTUKAN DATABASE YANG SEDANG DIUJI (Ketik: "MySQL" atau "PostgreSQL")
-// Ganti nilai ini sebelum menjalankan sesi pengujian tiap subjek,
-// lalu klik "Reset Data CSV & DB" di index.php sebelum mulai run baru.
+
 $db_engine = "MySQL";
 
 if ($db_engine == "MySQL") {
@@ -30,9 +27,6 @@ if ($db_engine == "MySQL") {
         die("Koneksi PostgreSQL Gagal: " . $e->getMessage());
     }
 } else {
-    // FIX: sebelumnya tidak ada penanganan jika $db_engine salah ketik.
-    // Tanpa guard ini, $conn tidak pernah terdefinisi dan insert.php akan
-    // gagal dengan pesan error yang membingungkan ("Call to a member
-    // function prepare() on null") alih-alih pesan yang jelas.
+    
     die("Konfigurasi salah: \$db_engine harus \"MySQL\" atau \"PostgreSQL\", ditemukan: \"$db_engine\"");
 }
