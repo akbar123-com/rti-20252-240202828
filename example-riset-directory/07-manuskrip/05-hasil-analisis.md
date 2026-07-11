@@ -1,6 +1,6 @@
 # 05-hasil-analisis
 
-Draf bab hasil dan analisis naskah ilmiah — **Tahap 5**.
+Draf bab hasil dan analisis naskah ilmiah **Tahap 5**.
 
 ---
 
@@ -30,7 +30,7 @@ Sebelum pengujian hipotesis komparatif, dilakukan analisis korelasi Pearson untu
 | Latency (MySQL vs PostgreSQL) | 35 | 0,249 | 0,150 |
 | RAM (MySQL vs PostgreSQL) | 35 | 0,440 | 0,008 |
 
-Korelasi *latency* antar kedua sistem tergolong lemah dan **tidak signifikan** (r=0,249, p=0,150 > 0,05) — performa *latency* MySQL pada suatu *run* tidak dapat memprediksi performa *latency* PostgreSQL pada *run* yang sama, mengindikasikan bahwa faktor penentu kecepatan *insert* pada kedua *engine* bersifat independen satu sama lain. Sebaliknya, korelasi RAM tergolong sedang dan **signifikan** (r=0,440, p=0,008 < 0,05), menunjukkan kedua database cenderung mengalami kenaikan/penurunan beban RAM secara bersamaan — kemungkinan besar dipengaruhi oleh kondisi *resource* host (server) yang sama saat pengujian berlangsung, bukan oleh karakteristik internal masing-masing *engine*.
+Korelasi *latency* antar kedua sistem tergolong lemah dan **tidak signifikan** (r=0,249, p=0,150 > 0,05) performa *latency* MySQL pada suatu *run* tidak dapat memprediksi performa *latency* PostgreSQL pada *run* yang sama, mengindikasikan bahwa faktor penentu kecepatan *insert* pada kedua *engine* bersifat independen satu sama lain. Sebaliknya, korelasi RAM tergolong sedang dan **signifikan** (r=0,440, p=0,008 < 0,05), menunjukkan kedua database cenderung mengalami kenaikan/penurunan beban RAM secara bersamaan kemungkinan besar dipengaruhi oleh kondisi *resource* host (server) yang sama saat pengujian berlangsung, bukan oleh karakteristik internal masing-masing *engine*.
 
 ## 4.3 Pengujian Hipotesis Perbedaan (Paired Samples Test)
 
@@ -76,16 +76,16 @@ Di luar dua metrik utama, tercatat anomali jumlah baris data yang gagal tersimpa
 | MySQL (35 *run*) | 35.000 | 34.965 | 35 | 23 dari 35 | Satu lonjakan ekstrem 15 baris pada satu *run* akibat *bottleneck* antrean web server |
 | PostgreSQL (35 *run*) | 35.000 | 34.959 | 41 | 15 dari 35 | Kehilangan tersebar pada lebih banyak *run*, diduga akibat *overload resource* memori |
 
-Total baris data yang hilang dari 70.000 baris terjadwal adalah 76 baris (0,11%). **Perbedaan jumlah *data loss* ini belum diuji signifikansinya secara statistik formal** (mis. uji Wilcoxon/Mann-Whitney pada variabel *loss*) dalam penelitian ini, sehingga pola yang teramati — MySQL jarang kehilangan data namun rentan lonjakan ekstrem, sedangkan PostgreSQL lebih sering kehilangan data namun dalam jumlah kecil per insiden — dilaporkan sebagai temuan deskriptif, bukan klaim inferensial (lihat pembahasan §4.5 dan keterbatasan pada Kesimpulan §5.2).
+Total baris data yang hilang dari 70.000 baris terjadwal adalah 76 baris (0,11%). **Perbedaan jumlah *data loss* ini belum diuji signifikansinya secara statistik formal** (mis. uji Wilcoxon/Mann-Whitney pada variabel *loss*) dalam penelitian ini, sehingga pola yang teramati MySQL jarang kehilangan data namun rentan lonjakan ekstrem, sedangkan PostgreSQL lebih sering kehilangan data namun dalam jumlah kecil per insiden dilaporkan sebagai temuan deskriptif, bukan klaim inferensial (lihat pembahasan §4.5 dan keterbatasan pada Kesimpulan §5.2).
 
 ## 4.5 Pembahasan
 
 Hasil pengujian menunjukkan pola yang tidak seragam di antara ketiga metrik yang diamati, dan pola ini penting untuk dimaknai secara hati-hati agar tidak melahirkan generalisasi yang berlebihan.
 
-Pada metrik **insert latency**, keunggulan MySQL terbukti sangat signifikan secara statistik dengan *effect size* yang tergolong sangat besar. Temuan ini konsisten dengan reputasi MySQL sebagai *engine* yang dioptimalkan untuk operasi tulis sederhana dan cepat, sementara PostgreSQL — yang dirancang dengan mekanisme validasi dan *concurrency control* (MVCC) yang lebih ketat — secara arsitektural memang membawa *overhead* tambahan pada setiap operasi `INSERT` tunggal.
+Pada metrik **insert latency**, keunggulan MySQL terbukti sangat signifikan secara statistik dengan *effect size* yang tergolong sangat besar. Temuan ini konsisten dengan reputasi MySQL sebagai *engine* yang dioptimalkan untuk operasi tulis sederhana dan cepat, sementara PostgreSQL yang dirancang dengan mekanisme validasi dan *concurrency control* (MVCC) yang lebih ketat secara arsitektural memang membawa *overhead* tambahan pada setiap operasi `INSERT` tunggal.
 
 Pada metrik **beban RAM**, tidak ditemukan perbedaan yang signifikan. Temuan ini penting karena membantah asumsi awal bahwa keunggulan kecepatan MySQL turut disertai efisiensi memori yang lebih baik. Signifikansi korelasi RAM (r=0,440, p=0,008) yang justru muncul antar kedua database mengindikasikan bahwa fluktuasi beban RAM lebih banyak dipengaruhi oleh kondisi *resource host* bersama (server yang sama menjalankan kedua *engine* secara bergantian) dibandingkan oleh karakteristik arsitektur *engine* itu sendiri.
 
 Pada temuan **data loss**, pola yang muncul justru berlawanan dari asumsi umum "cepat tapi tidak stabil vs lambat tapi stabil": PostgreSQL yang lebih lambat justru mengalami *data loss* pada proporsi *run* yang lebih besar (20 dari 35 *run*), sementara MySQL yang lebih cepat justru lebih sering bersih dari *loss* (23 dari 35 *run*) namun mengalami satu lonjakan ekstrem yang mengindikasikan kerentanan terhadap *bottleneck* pada beban puncak. Karena belum diuji signifikansinya secara statistik, penelitian ini tidak menyimpulkan bahwa salah satu database "lebih andal" dari yang lain berdasarkan metrik ini saja.
 
-Secara keseluruhan, hasil ini menegaskan bahwa klaim keunggulan performa database bersifat *metric-specific* — keunggulan pada satu metrik (*latency*) tidak dapat digeneralisasi secara otomatis ke metrik lain (RAM, keandalan) tanpa pengujian statistik terpisah untuk masing-masing metrik tersebut.
+Secara keseluruhan, hasil ini menegaskan bahwa klaim keunggulan performa database bersifat *metric-specific* keunggulan pada satu metrik (*latency*) tidak dapat digeneralisasi secara otomatis ke metrik lain (RAM, keandalan) tanpa pengujian statistik terpisah untuk masing-masing metrik tersebut.

@@ -1,6 +1,6 @@
 # 07-daftar-pustaka
 
-Draf daftar pustaka naskah ilmiah — **Format IEEE**.
+Draf daftar pustaka naskah ilmiah **Format IEEE**.
 
 ---
 

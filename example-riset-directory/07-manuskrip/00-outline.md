@@ -1,6 +1,6 @@
 # 00-outline
 
-Outline, peta sumber data, dan daftar klaim kunci untuk draf manuskrip ilmiah — **Tahap 5**.
+Outline, peta sumber data, dan daftar klaim kunci untuk draf manuskrip ilmiah **Tahap 5**.
 
 ---
 
@@ -8,7 +8,7 @@ Outline, peta sumber data, dan daftar klaim kunci untuk draf manuskrip ilmiah �
 
 Dokumen ini berfungsi sebagai peta kendali untuk memastikan seluruh data statistik yang ditulis pada naskah bersumber dari data empiris yang valid (bukan dari folder contoh/template):
 
-* **Sumber Data Mentah:** [`../04-data/data RTI EXEL.xlsx`](../04-data/data%20RTI%20EXEL.xlsx) — 35 pasangan run/replikasi pengujian MySQL vs PostgreSQL, sensor detak jantung MAX30102.
+* **Sumber Data Mentah:** [`../04-data/data RTI EXEL.xlsx`](../04-data/data%20RTI%20EXEL.xlsx) 35 pasangan run/replikasi pengujian MySQL vs PostgreSQL, sensor detak jantung MAX30102.
 * **Kamus Data:** [`../04-data/data-dictionary.md`](../04-data/data-dictionary.md)
 * **Validasi Data:** [`../04-data/ringkasan-validasi.md`](../04-data/ringkasan-validasi.md)
 * **Sumber Output Statistik:** `../06-output/SPSS RTI FIKS FINALL (Paired-Samples T Test).spv`, `../06-output/SPSS RTI FINAL (mean dan std).spv`, dan aplikasi web analisis kustom (`../05-kode/web-analysis/`).
@@ -48,7 +48,7 @@ Ringkasan latar belakang kebutuhan database real-time untuk IoT medis, metode ek
 ### 4. Hasil dan Analisis
 * **Statistik Deskriptif:** Latency MySQL 2.1240 ms vs PostgreSQL 4.4580 ms; RAM MySQL 86.6500% vs PostgreSQL 86.2534%.
 * **Korelasi Berpasangan:** Latency r=0.249 (p=0.150, tidak signifikan); RAM r=0.440 (p=0.008, signifikan).
-* **Uji Hipotesis:** Latency — Paired T-Test, t(34)=-23.7493, p<0.001, Cohen's d=-4.0144 (signifikan, efek sangat besar). RAM — Wilcoxon Signed-Rank, z=0.9009, p=0.368 (tidak signifikan).
+* **Uji Hipotesis:** Latency — Paired T-Test, t(34)=-23.7493, p<0.001, Cohen's d=-4.0144 (signifikan, efek sangat besar). RAM Wilcoxon Signed-Rank, z=0.9009, p=0.368 (tidak signifikan).
 * **Data Loss (temuan tambahan):** MySQL 35 baris hilang (1 lonjakan ekstrem 15 baris/run), PostgreSQL 41 baris hilang (lebih sering, 20 dari 35 run mengalami loss).
 
 ### 5. Kesimpulan dan Saran

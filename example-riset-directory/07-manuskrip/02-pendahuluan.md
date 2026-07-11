@@ -1,6 +1,6 @@
 # 02-pendahuluan
 
-Draf bab pendahuluan naskah ilmiah — **Tahap 5**.
+Draf bab pendahuluan naskah ilmiah **Tahap 5**.
 
 ---
 
@@ -28,13 +28,13 @@ Berdasarkan pemaparan latar belakang di atas, rumusan masalah dalam penelitian i
 
 ## 1.4 Kontribusi Penelitian
 
-Literatur yang ada selama ini terbagi pada dua jalur terpisah: riset IoT medis yang hanya berfokus pada keberhasilan akuisisi sensor tanpa menguji sisi database, dan riset performa RDBMS yang hanya diuji dengan dataset statis yang diimpor sekaligus (lihat Tinjauan Pustaka §2.4). Penelitian ini berkontribusi dengan menyatukan kedua sisi tersebut — menguji langsung ketahanan MySQL dan PostgreSQL ketika dihadapkan pada aliran data nyata dari perangkat sensor fisik berfrekuensi tinggi (*continuous streaming*), bukan data buatan/simulasi. Kontribusi ini bersifat *comparison* empiris yang menghasilkan bukti kuantitatif (bukan sekadar rekomendasi umum) mengenai kondisi di mana masing-masing database unggul, sekaligus mengidentifikasi trade-off antara kecepatan dan keandalan yang belum diungkap oleh studi-studi terdahulu.
+Literatur yang ada selama ini terbagi pada dua jalur terpisah riset IoT medis yang hanya berfokus pada keberhasilan akuisisi sensor tanpa menguji sisi database, dan riset performa RDBMS yang hanya diuji dengan dataset statis yang diimpor sekaligus (lihat Tinjauan Pustaka §2.4). Penelitian ini berkontribusi dengan menyatukan kedua sisi tersebut menguji langsung ketahanan MySQL dan PostgreSQL ketika dihadapkan pada aliran data nyata dari perangkat sensor fisik berfrekuensi tinggi (*continuous streaming*), bukan data buatan/simulasi. Kontribusi ini bersifat *comparison* empiris yang menghasilkan bukti kuantitatif (bukan sekadar rekomendasi umum) mengenai kondisi di mana masing-masing database unggul, sekaligus mengidentifikasi trade-off antara kecepatan dan keandalan yang belum diungkap oleh studi-studi terdahulu.
 
 ## 1.5 Batasan Masalah
 
 Untuk menjaga ruang lingkup penelitian tetap fokus, ditetapkan batasan masalah sebagai berikut:
 
-1. Pengujian transmisi data dilakukan menggunakan koneksi internet publik (Wi-Fi), sehingga latensi jaringan (*network latency*) merupakan faktor alami yang turut memengaruhi performa keseluruhan sistem, merepresentasikan kondisi implementasi IoT di dunia nyata — bukan diperlakukan sebagai *confounding variable* yang perlu dihilangkan.
+1. Pengujian transmisi data dilakukan menggunakan koneksi internet publik (Wi-Fi), sehingga latensi jaringan (*network latency*) merupakan faktor alami yang turut memengaruhi performa keseluruhan sistem, merepresentasikan kondisi implementasi IoT di dunia nyata bukan diperlakukan sebagai *confounding variable* yang perlu dihilangkan.
 2. Perangkat keras yang digunakan sebagai *client* pengirim data adalah mikrokontroler ESP32 dan modul sensor MAX30102.
 3. Skenario eksperimen dibatasi pada operasi *write/insert* data secara kontinu, dengan jumlah sampel pengujian sebanyak 35 *run* (replikasi) untuk setiap database guna memastikan validitas pengujian statistik.
-4. Metrik utama yang dianalisis adalah *insert latency* dan beban RAM; metrik beban *disk* dan jumlah *data loss* dicatat sebagai data pendukung namun belum diuji signifikansi statistiknya secara formal pada penelitian ini (lihat Kesimpulan §5.2).
+4. Metrik utama yang dianalisis adalah *insert latency* dan beban RAM; metrik beban *disk* dan jumlah *data loss* dicatat sebagai data pendukung namun belum diuji signifikansi statistiknya secara formal pada penelitian ini.

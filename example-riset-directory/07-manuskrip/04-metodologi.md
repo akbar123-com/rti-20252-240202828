@@ -1,12 +1,12 @@
 # 04-metodologi
 
-Draf bab metodologi penelitian naskah ilmiah — **Tahap 5**.
+Draf bab metodologi penelitian naskah ilmiah **Tahap 5**.
 
 ---
 
 ## 3.1 Desain Penelitian dan Unit Analisis
 
-Penelitian ini menggunakan pendekatan kuantitatif dengan metode eksperimen terkontrol (*Controlled Experiment*) menggunakan rancangan berpasangan (*Paired/Within-Condition Design*). Desain ini dipilih karena setiap *run* replikasi menghasilkan sepasang pengamatan pada kondisi jaringan, frekuensi kirim data, dan lingkungan server yang identik — satu database aktif diuji, sementara yang lain dimatikan, kemudian dipertukarkan pada *run* pembanding.
+Penelitian ini menggunakan pendekatan kuantitatif dengan metode eksperimen terkontrol (*Controlled Experiment*) menggunakan rancangan berpasangan (*Paired/Within-Condition Design*). Desain ini dipilih karena setiap *run* replikasi menghasilkan sepasang pengamatan pada kondisi jaringan, frekuensi kirim data, dan lingkungan server yang identik satu database aktif diuji, sementara yang lain dimatikan, kemudian dipertukarkan pada *run* pembanding.
 
 Unit analisis dalam penelitian ini adalah *run* pengujian (bukan responden manusia): setiap *run* merepresentasikan satu sesi pengiriman 1.000 baris data sensor secara *continuous streaming* ke satu database yang sedang aktif. Variabel independen (IV) penelitian ini adalah **jenis database relasional yang digunakan**, dengan PostgreSQL diposisikan sebagai kondisi pembanding terhadap MySQL sebagai kondisi *baseline* dari sisi kepraktisan implementasi IoT.
 
@@ -14,11 +14,11 @@ Unit analisis dalam penelitian ini adalah *run* pengujian (bukan responden manus
 
 Sistem pengujian terdiri atas lima komponen utama:
 
-1. **ESP32 + Sensor MAX30102 (Client/Pengirim Data)** — membaca nilai detak jantung dari sensor, lalu mengirimkannya secara *continuous streaming* melalui Wi-Fi lokal ke server. Firmware ditulis dan diunggah menggunakan Arduino IDE.
-2. **Web Server Lokal (XAMPP/Apache)** — menjalankan skrip *backend* penangkap data.
-3. **Skrip Penerima/Logger (PHP Native)** — menerima paket data dari ESP32, mencatat *timestamp* sebelum dan sesudah eksekusi `INSERT` menggunakan `microtime(true)` untuk menghitung *insert latency*, lalu menuliskannya ke database yang sedang aktif diuji. Koneksi database ditentukan lewat konfigurasi terpusat (*configuration-driven*), bukan *hardcode* di banyak tempat, agar pengujian dapat diulang secara konsisten.
-4. **Database Engine (dipertukarkan via konfigurasi)** — MySQL 8.0 dan PostgreSQL 15.x/16.x diuji bergantian (satu aktif, satu dimatikan) pada kondisi jaringan dan beban yang identik.
-5. **Resource Monitor (Task Manager, Windows 11)** — memantau pemakaian CPU/RAM server secara manual selama pengujian berlangsung.
+1. **ESP32 + Sensor MAX30102 (Client/Pengirim Data)** membaca nilai detak jantung dari sensor, lalu mengirimkannya secara *continuous streaming* melalui Wi-Fi lokal ke server. Firmware ditulis dan diunggah menggunakan Arduino IDE.
+2. **Web Server Lokal (XAMPP/Apache)** menjalankan skrip *backend* penangkap data.
+3. **Skrip Penerima/Logger (PHP Native)** menerima paket data dari ESP32, mencatat *timestamp* sebelum dan sesudah eksekusi `INSERT` menggunakan `microtime(true)` untuk menghitung *insert latency*, lalu menuliskannya ke database yang sedang aktif diuji. Koneksi database ditentukan lewat konfigurasi terpusat (*configuration-driven*), bukan *hardcode* di banyak tempat, agar pengujian dapat diulang secara konsisten.
+4. **Database Engine (dipertukarkan via konfigurasi)** MySQL 8.0 dan PostgreSQL 15.x/16.x diuji bergantian (satu aktif, satu dimatikan) pada kondisi jaringan dan beban yang identik.
+5. **Resource Monitor (Task Manager, Windows 11)** memantau pemakaian CPU/RAM server secara manual selama pengujian berlangsung.
 
 ### Alur Data Pengujian
 
@@ -27,7 +27,7 @@ Sensor MAX30102 → ESP32 (kirim via Wi-Fi lokal, continuous streaming)
   → Skrip PHP Native (XAMPP/Apache, catat timestamp mulai)
     → [DB aktif?] → MySQL 8.0  atau  PostgreSQL 15/16
       → catat timestamp selesai → hitung insert_latency (ms)
-        → Task Manager: catat %RAM
+        → Task Manager catat %RAM
           → Rekap 1.000 baris per sesi pengujian
 ```
 
@@ -62,7 +62,7 @@ CREATE TABLE log_jantung (
 );
 ```
 
-*Insert latency* dan beban RAM sengaja tidak disimpan sebagai kolom di dalam tabel — keduanya dicatat di luar database (di skrip PHP dan Task Manager) agar proses pencatatan metrik tidak menambah beban *insert* itu sendiri.
+*Insert latency* dan beban RAM sengaja tidak disimpan sebagai kolom di dalam tabel keduanya dicatat di luar database (di skrip PHP dan Task Manager) agar proses pencatatan metrik tidak menambah beban *insert* itu sendiri.
 
 ## 3.3 Variabel, Metrik, dan Prosedur Eksperimen
 
@@ -73,7 +73,7 @@ CREATE TABLE log_jantung (
 
 **Prosedur pelaksanaan tiap *run*:**
 
-1. Pastikan laptop server dan ESP32 terhubung ke jaringan Wi-Fi yang sama, dengan akses internet publik aktif (bukan jaringan terisolasi) — latensi jaringan dianggap sebagai faktor alami yang merepresentasikan kondisi implementasi IoT di dunia nyata, sesuai batasan masalah penelitian.
+1. Pastikan laptop server dan ESP32 terhubung ke jaringan Wi-Fi yang sama, dengan akses internet publik aktif (bukan jaringan terisolasi) latensi jaringan dianggap sebagai faktor alami yang merepresentasikan kondisi implementasi IoT di dunia nyata, sesuai batasan masalah penelitian.
 2. Nyalakan *service* database yang sedang diuji (mis. MySQL), pastikan database pembanding dalam kondisi mati.
 3. Jalankan skrip *backend* PHP, lalu aktifkan ESP32 agar mulai mengirim data.
 4. Pantau persentase RAM server melalui Task Manager selama pengujian berjalan.

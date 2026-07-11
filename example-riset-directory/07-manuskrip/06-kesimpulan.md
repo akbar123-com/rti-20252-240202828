@@ -1,6 +1,6 @@
 # 06-kesimpulan
 
-Draf bab kesimpulan dan saran naskah ilmiah — **Tahap 5**.
+Draf bab kesimpulan dan saran naskah ilmiah **Tahap 5**.
 
 ---
 
