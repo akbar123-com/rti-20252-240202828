@@ -1,12 +1,5 @@
 <?php
-/**
- * connect.php
- * -----------
- * Koneksi MySQL untuk fitur riwayat analisis (OPSIONAL).
- * Sesuaikan $host/$user/$pass/$db kalau beda dengan setup XAMPP kamu.
- * Kalau kamu sudah punya koneksi.php dari project RTI sebelumnya, database
- * "riset_db" bisa dipakai bareng (tabelnya beda: log_jantung vs analisis_riwayat).
- */
+
 
 $host = "localhost";
 $user = "root";

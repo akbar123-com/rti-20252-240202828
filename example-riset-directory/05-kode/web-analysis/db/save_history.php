@@ -1,11 +1,5 @@
 <?php
-/**
- * save_history.php
- * -----------------
- * Endpoint untuk menyimpan satu ringkasan hasil analisis ke tabel
- * analisis_riwayat (lihat schema.sql). Dipanggil dari tombol "Simpan ke
- * Riwayat" di halaman hasil (index.php).
- */
+
 
 require 'connect.php';
 

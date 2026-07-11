@@ -6,7 +6,7 @@ Arsitektur, landasan teori, dan metodologi analisis statistik — hasil **Tahap 
 
 * Diagram alur data pengujian (ESP32 → Logger → MySQL/PostgreSQL) & skema database
 * Landasan teori metrik performa (Insert Latency & Beban Server)
-* Konsep dasar & rumus Independent Samples T-Test
+* Konsep dasar & rumus Paired Samples T-Test.
 * Perumusan hipotesis (H0/H1) dan kriteria pengambilan keputusan (signifikansi)
 * Tinjauan pustaka & research gap (Bab 2)
 

@@ -20,8 +20,8 @@ Deskripsi kolom pada dataset mentah hasil pengujian MySQL vs PostgreSQL (35 pasa
 Setiap baris (`NO`) merepresentasikan **satu subjek** yang datanya diuji pada **kedua** database secara berpasangan pada kondisi yang identik (stream sensor yang sama). Untuk analisis statistik (Paired Samples T-Test), selisih dihitung per baris:
 
 ```
-diff_latensi = MYSQL_LATENSI - PG_LATENSI
-diff_ram     = MYSQL_RAM - PG_RAM
+UJI_LATENSI = MYSQL_LATENSI - PG_LATENSI
+UJI_RAM     = MYSQL_RAM - PG_RAM
 ```
 
 ## Ringkasan Statistik Mentah (N = 35)

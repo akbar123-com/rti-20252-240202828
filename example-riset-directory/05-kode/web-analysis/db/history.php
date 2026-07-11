@@ -1,9 +1,5 @@
 <?php
-/**
- * history.php
- * -----------
- * Lihat semua riwayat analisis yang pernah disimpan ke database.
- */
+
 
 require 'connect.php';
 

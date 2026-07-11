@@ -13,7 +13,7 @@ Data mentah hasil pengujian *Insert Latency* & Beban Server (MySQL vs PostgreSQL
 
 - **Jenis desain:** *paired* — setiap subjek (orang) diuji pada MySQL **dan** PostgreSQL secara berpasangan, dengan stream data sensor MAX30102 yang identik per subjek.
 - **N = 35 pasangan run** (35 subjek, masing-masing menghasilkan 1 pasang pengamatan MySQL–PostgreSQL).
-- **Beban per run:** ±10.000 baris data per subjek per database (lihat WS-10, Latihan 2).
+- **Beban per run:** 1.000 baris data per subjek per database (lihat WS-10, Latihan 2).
 - **Sumber data:** aliran data sensor MAX30102 (detak jantung) dari ESP32, dikirim ke MySQL dan PostgreSQL untuk diukur waktu simpan (*insert latency*) dan beban servernya (RAM, disk, packet loss).
 
 ## Metrik yang Dicatat
